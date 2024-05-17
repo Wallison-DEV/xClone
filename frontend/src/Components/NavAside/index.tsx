@@ -32,7 +32,7 @@ const NavAside = () => {
         try {
             const refreshToken = token.refreshToken;
             if (refreshToken) {
-                const responseLogout = await fetch('http://localhost:8000/api/logout/', {
+                const responseLogout = await fetch('http://wallison.pythonanywhere.com/api/logout/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
