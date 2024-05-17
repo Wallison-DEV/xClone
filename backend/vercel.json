@@ -1,0 +1,11 @@
+{
+    "builds": [{
+        "src": "twitter/wsgi.py",
+        "use": "@vercel/python",
+        "config": {"runtime": "python3.9"}
+    }],
+    "routes":[{
+        "src": "./(.*)",
+        "dest": "twitter/wsgi.py"
+    }]
+}
