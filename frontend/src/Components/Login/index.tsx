@@ -3,7 +3,6 @@ import { useCallback, useState } from 'react';
 
 import { calculateTimeUntilExpiration, scheduleTokenRefresh } from '../../Utils';
 import { useDoLoginMutation } from '../../Services/api';
-import { updateTokens } from '../../Store/reducers/token'
 
 import XLogo from '../../assets/img/twitter-logo.png'
 import googleLogo from '../../assets/icons/google.png'
@@ -19,7 +18,7 @@ import Button from '../Button';
 
 import { Separador, ListDiv } from '../../Pages/Entrada/styles';
 import { Modal, SecondTitle } from '../../styles';
-import { closeModal, openRegister } from '../../Store/reducers/entry';
+import { closeModal, openRegister, trueValidate } from '../../Store/reducers/entry';
 
 const Login = () => {
     const [usernameOrEmail, setUsernameOrEmail] = useState('');
@@ -39,14 +38,17 @@ const Login = () => {
                 return;
             }
             const { access: accessToken, exp: tokenExp, refresh: refreshToken } = response;
-            dispatch(updateTokens({ accessToken: accessToken, accessTokenExp: tokenExp, refreshToken: refreshToken }))
+            // dispatch(trueValidate())
+            localStorage.setItem('accessToken', accessToken);
+            localStorage.setItem('accessTokenExp', tokenExp.toString());
+            localStorage.setItem('refreshToken', refreshToken);
             const timeUntilExpiration = calculateTimeUntilExpiration(tokenExp);
-            scheduleTokenRefresh(timeUntilExpiration, refreshToken, dispatch);
+            scheduleTokenRefresh(timeUntilExpiration, refreshToken, dispatch, 0);
         } catch (error: any) {
             console.error('Error logging in:', error.message);
             setErrorMessage('Falha ao fazer login. Por favor, verifique suas credenciais.');
         }
-    }, [purchase, isError, error, dispatch, usernameOrEmail, password]);
+    }, [purchase, isError, error, dispatch]);
 
     const handleSubmit = (event: { preventDefault: () => void; }) => {
         event.preventDefault();

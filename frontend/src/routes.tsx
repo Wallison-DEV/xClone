@@ -1,11 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+
 import Entrada from './Pages/Entrada';
 import Home from './Pages/Home';
 import { verifyAuthenticated } from './Utils';
-import { clearTokens } from './Store/reducers/token';
-import { RootReducer } from './Store';
 import Profile from './Pages/Profile';
 
 import ProfileAside from './Components/ProfilesAside'
@@ -14,36 +13,47 @@ import Search from './Pages/Search';
 
 import { Container } from './styles';
 import Post from './Pages/Post';
+import { RootReducer } from './Store';
+import { falseValidate, trueValidate } from './Store/reducers/entry';
 
 const Rotas = () => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const token = useSelector((state: RootReducer) => state.token);
+    const isAuthenticated = useSelector((state: RootReducer) => state.entry.isValidate);
     const dispatch = useDispatch();
 
     useEffect(() => {
         const checkAuthentication = async () => {
+            const accessToken = localStorage.getItem('accessToken');
+            const accessTokenExp = localStorage.getItem('accessTokenExp');
             try {
-                if (token && token.accessTokenExp) {
-                    const isAuthenticated = await verifyAuthenticated(token);
-                    setIsAuthenticated(!!isAuthenticated);
+                const isSuccess = await verifyAuthenticated(accessToken, accessTokenExp);
+                if (isSuccess) {
+                    console.log('Autenticação bem-sucedida');
+                    dispatch(trueValidate());
                 } else {
-                    setIsAuthenticated(false);
+                    console.log('Falha na autenticação');
+                    dispatch(falseValidate());
                 }
             } catch (error) {
-                console.error('Error verifying authentication:', error);
-                setIsAuthenticated(false);
-                dispatch(clearTokens());
+                console.error('Erro ao verificar autenticação:', error);
+                dispatch(falseValidate());
             }
         };
-        checkAuthentication();
-    }, [token, dispatch]);
+
+        const pollingInterval = setInterval(() => {
+            checkAuthentication();
+        }, 5000);
+
+        return () => {
+            clearInterval(pollingInterval);
+        };
+    }, [dispatch]);
 
     return (
         <>
             {isAuthenticated && (
                 <Container>
                     <NavAside />
-                    <div className="min-width">
+                    < >
                         <Routes>
                             <Route path="/home" element={<Home />} />
                             <Route path="/profile/:id" element={<Profile />} />
@@ -51,7 +61,7 @@ const Rotas = () => {
                             <Route path="/search" element={<Search />} />
                             <Route path="*" element={<Navigate to="/home" />} />
                         </Routes>
-                    </div>
+                    </>
                     <ProfileAside />
                 </Container>
             )}

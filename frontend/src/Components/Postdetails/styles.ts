@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { PostContainer } from "../Tweet/styles";
+import { PostContainer } from "../PostList/styles";
 import { Colors } from "../../styles";
 import { PostForm } from "../PostForm/styles";
 

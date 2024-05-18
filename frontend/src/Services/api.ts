@@ -29,7 +29,7 @@ type AddLikeRequest = {
 const api = createApi({
     reducerPath: '',
     baseQuery: fetchBaseQuery({
-        baseUrl: 'http://wallison.pythonanywhere.com/'
+        baseUrl: 'http://localhost:8000/'
     }),
     endpoints: (builder) => ({
         DoLogin: builder.mutation<LoginResponse, LoginRequestBody>({

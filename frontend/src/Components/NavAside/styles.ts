@@ -6,9 +6,9 @@ import { NavLink } from 'react-router-dom';
 export const ItemAside = styled(NavLink)`
     display: flex;
     align-items: center;
-    gap: 8px;
     padding: 0 16px;
     height: 50px;
+    gap: 8px;
     border-radius: 24px;
     text-align: start;
     font-size: 20px;
@@ -27,14 +27,19 @@ export const LeftAside = styled.aside`
     position: sticky;
     top: 0;
     left: 0;
-    width: 260px;
-    padding: 16px;
+    width: 220px;
     border-right: solid 1px #ccc;
     height: 100vh;
-
+    padding-top: 16px;
+    
     >div{
         position: relative;
         height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        padding-right: 8px;
+
         >div{
             position: absolute;
             top: 0;
@@ -69,6 +74,7 @@ export const LeftAside = styled.aside`
         padding: 8px;
         top: auto;
         bottom: 0;
+        left: 0;
         height: 58px;
         width: 100%;
         z-index: 1000;
@@ -78,6 +84,7 @@ export const LeftAside = styled.aside`
         >div{
             height: auto;
             >div{
+                width: 100%;
                 position: relative;
                 height: auto;
                 display: flex;

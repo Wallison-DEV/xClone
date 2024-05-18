@@ -1,8 +1,6 @@
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
 
 import { useDoPostMutation } from '../../Services/api'
-import { RootReducer } from '../../Store';
 
 import * as S from './styles'
 
@@ -12,7 +10,7 @@ import userImg from '../../assets/img/user.png'
 import pictureIcon from '../../assets/icons/pictureIcon.png'
 
 const PostForm = ({ isNotModal }: { isNotModal?: boolean }) => {
-    const token = useSelector((state: RootReducer) => state.token)
+    const accessToken = localStorage.getItem("accessToken") || ''
     const [textPostValue, setTextPostValue] = useState('')
     const [sourcePostValue, setSourcePostValue] = useState<File | null>(null)
     const [postMedia] = useDoPostMutation()
@@ -26,7 +24,7 @@ const PostForm = ({ isNotModal }: { isNotModal?: boolean }) => {
             }
             await postMedia({
                 body: formData,
-                accessToken: token?.accessToken || ''
+                accessToken
             });
             setSourcePostValue(null);
             setTextPostValue('');

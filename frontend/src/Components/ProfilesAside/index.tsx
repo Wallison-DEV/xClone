@@ -1,7 +1,4 @@
 import { useEffect } from "react"
-import { useSelector } from 'react-redux'
-
-import { RootReducer } from '../../Store'
 
 import * as S from './styles'
 import { useListUnfollowedUsersQuery } from '../../Services/api'
@@ -10,8 +7,8 @@ import { useState } from 'react'
 
 
 const ProfileAside = () => {
-    const token = useSelector((state: RootReducer) => state.token)
-    const { data: profilesUnfollowed } = useListUnfollowedUsersQuery(token?.accessToken || '')
+    const accessToken = localStorage.getItem("accessToken") || ''
+    const { data: profilesUnfollowed } = useListUnfollowedUsersQuery(accessToken)
     const [profiles, setProfiles] = useState<UserProfile[]>([])
 
     useEffect(() => {

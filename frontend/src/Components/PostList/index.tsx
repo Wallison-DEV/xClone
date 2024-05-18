@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 
-import { RootReducer } from "../../Store";
 import { useListFollowedPostsQuery, useListSuggestedPostsQuery } from '../../Services/api'
 
 import * as S from './styles'
@@ -11,18 +9,18 @@ import Tweet from "../Tweet";
 import PostForm from "../PostForm";
 
 const PostList = () => {
-    const token = useSelector((state: RootReducer) => state.token)
+    const accessToken = localStorage.getItem('accessToken') || ''
     const [posts, setPosts] = useState<(PostProps | RetweetProps)[]>([]);
     const [typePostsAll, setTypePostsAll] = useState(false)
     const {
         data: followedPosts,
         isLoading: isLoadingFollowedPosts,
-    } = useListFollowedPostsQuery(token?.accessToken || '');
+    } = useListFollowedPostsQuery(accessToken);
 
     const {
         data: suggestedPosts,
         isLoading: isLoadingSuggestedPosts,
-    } = useListSuggestedPostsQuery(token?.accessToken || '');
+    } = useListSuggestedPostsQuery(accessToken);
 
     useEffect(() => {
         if (window.location.pathname === "/home") {
@@ -47,7 +45,7 @@ const PostList = () => {
                 ) : (
                     <>
                         {
-                            posts ? (
+                            posts.length > 0 ? (
                                 posts.map((post) => (
                                     <div key={post.id}>
                                         {('tweet_id' in post) ? (<Retweet props={post} />) : (<Tweet props={post} />)}

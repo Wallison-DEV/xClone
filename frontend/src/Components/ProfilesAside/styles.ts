@@ -3,7 +3,8 @@ import { breakpoints } from "../../styles";
 
 export const RightAside = styled.aside`
     max-width: 350px;
-    min-width: 280px;
+    width: 100%;
+    min-width: 290px;
     position: sticky;
     top: 0;
     right: 0;

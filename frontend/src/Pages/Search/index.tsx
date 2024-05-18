@@ -1,4 +1,3 @@
-import { useSelector } from 'react-redux'
 import { useEffect, useState } from 'react'
 
 import * as S from './styles'
@@ -9,14 +8,13 @@ import Retweet from '../../Components/Retweet'
 import UsersList from '../../Components/UsersList'
 
 import { useFilterPostQuery, useFilterUserQuery } from '../../Services/api'
-import { RootReducer } from '../../Store'
 
 const Search = () => {
-    const token = useSelector((state: RootReducer) => state.token)
+    const accessToken = localStorage.getItem("accessToken") || '';
     const [typeFilterPosts, setTypeFilterPosts] = useState(true)
     const [filter, setFilter] = useState(' ')
-    const { data: filteredUsers, isLoading: loadingUsers, isSuccess } = useFilterUserQuery({ content: filter, accessToken: token.accessToken || '' });
-    const { data: filteredPosts, isLoading: loadingPosts } = useFilterPostQuery({ content: filter, accessToken: token.accessToken || '' })
+    const { data: filteredUsers, isLoading: loadingUsers, isSuccess } = useFilterUserQuery({ content: filter, accessToken });
+    const { data: filteredPosts, isLoading: loadingPosts } = useFilterPostQuery({ content: filter, accessToken })
 
     useEffect(() => {
         console.log('filtered posts', filteredPosts)

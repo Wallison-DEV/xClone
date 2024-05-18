@@ -1,9 +1,16 @@
 import styled from "styled-components";
+import { breakpoints } from "../../styles";
 
 export const SearchContainer = styled.div`
-    grid-column: 2 / 3; 
     display: flex;
     flex-direction: column;
+    width: 600px;
+    padding: 12px;
+
+    @media ( max-width: ${breakpoints.tablet}){
+        margin-bottom: 72px;
+        width: 100%;
+    }
     
     input {
         border-radius: 24px;
