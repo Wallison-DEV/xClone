@@ -1,6 +1,5 @@
 import styled, { createGlobalStyle } from 'styled-components'
 
-
 export const Colors = {
     black: '#000',
     lightBlack: 'rgb(15, 20, 25)',
@@ -71,24 +70,15 @@ export const EstiloGlobal = createGlobalStyle`
     .margin-top {
         margin-top: 24px;
     }
-    .min-width {
-        min-width: 600px;
-        padding: 16px;
-        max-width: 738px;
-        width: 100%;
-    }
 `
 
 export const Container = styled.div`
-    display: grid;
+    display: flex;
     height: 100%;
-    grid-template-columns : 260px auto auto;
     max-width: 1310px;
+    justify-content: center;
     margin: 0 auto;
 
-    @media (max-width: ${breakpoints.desktop}){
-        display: flex;
-    }
 `;
 
 export const PrimaryTitle = styled.h1`

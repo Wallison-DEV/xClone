@@ -22,11 +22,11 @@ interface UsersListProps {
 }
 
 const UsersList = ({ users, followButton }: UsersListProps) => {
-    const token = useSelector((state: RootReducer) => state.token)
+    const accessToken = localStorage.getItem("accessToken") || ''
     const followedProfilesIds = useSelector((state: RootReducer) => state.profile.followedProfiles)
     const [followUser] = useFollowMutation()
     const [unfollowUser] = useUnfollowMutation()
-    const { data: myProfile } = useGetMyuserQuery(token?.accessToken || '')
+    const { data: myProfile } = useGetMyuserQuery(accessToken)
     const dispatch = useDispatch()
     const navigate = useNavigate()
 
@@ -48,9 +48,9 @@ const UsersList = ({ users, followButton }: UsersListProps) => {
     }
     const handleFollowProfile = (profileId: number) => {
         if (isProfileFollowed(profileId)) {
-            unfollowProfile(profileId, token?.accessToken || '', dispatch, unfollowUser);
+            unfollowProfile(profileId, accessToken, dispatch, unfollowUser);
         } else {
-            followProfile(profileId, token?.accessToken || '', dispatch, followUser);
+            followProfile(profileId, accessToken, dispatch, followUser);
         }
     }
 

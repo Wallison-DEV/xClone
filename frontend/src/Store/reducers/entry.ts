@@ -1,14 +1,16 @@
 import { PayloadAction, createSlice} from '@reduxjs/toolkit'
 
-type ModalProps = {
+type EntryProps = {
     loginOpen : boolean,
     registerOpen : boolean,
     followedProfiles: number[], 
+    isValidate: boolean,
 }
-const initialState:ModalProps = {
+const initialState:EntryProps = {
     loginOpen : false,
     registerOpen : false,
     followedProfiles: [], 
+    isValidate : false,
 }
 
 const entrySlice = createSlice({
@@ -29,9 +31,15 @@ const entrySlice = createSlice({
         },
         followedProfilesIds(state, action:PayloadAction<number>) {
             state.followedProfiles.push(action.payload); 
-        }
+        },
+        trueValidate( state){
+            state.isValidate = true;
+        },
+        falseValidate( state){
+            state.isValidate = false;
+        },
     }
 })
-export const { openLogin, openRegister, closeModal, followedProfilesIds } = entrySlice.actions;
+export const { openLogin, openRegister, closeModal, followedProfilesIds, trueValidate, falseValidate } = entrySlice.actions;
 
 export default entrySlice.reducer;

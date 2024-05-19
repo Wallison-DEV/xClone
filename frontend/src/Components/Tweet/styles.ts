@@ -2,15 +2,6 @@ import styled from "styled-components";
 import { ButtonStyle } from "../Button/styles";
 import { breakpoints } from "../../styles";
 
-export const PostContainer = styled.div`
-    width: 100%;
-    border: 1px solid #f0f0f0;
-    border-radius: 8px;
-    padding: 16px;
-    margin-top: 16px;
-    font-size: 16px;
-`;
-
 export const UserInfo = styled.div`
     display: flex;
     flex-wrap: wrap;
@@ -137,12 +128,19 @@ export const PostDetails = styled.div`
 export const PostDiv = styled.div`
     width: 100%;
     border: 1px solid #f0f0f0;
-    padding: 8px;
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 16px;
+    font-size: 16px;
 `
 
 export const ImageDiv = styled.div`
     display: flex;
     justify-content: center;
-    width: 95%;
-    margin: 0;
+    align-items: center;
+    width: 100%;
+    img, video {
+        width: 516px;
+        height: 290px;
+    }
 `

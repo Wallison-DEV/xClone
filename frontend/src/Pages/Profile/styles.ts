@@ -4,10 +4,10 @@ import configureIcon from '../../assets/icons/configuration.png'
 import { Colors, breakpoints } from "../../styles";
 
 export const Profile = styled.div`
-    grid-column: 2 / 3; 
-    width: 100%;
+    width: 600px;
 
     @media ( max-width: ${breakpoints.tablet}){
+        width: 100%;
         margin-bottom: 72px;
     }
 `

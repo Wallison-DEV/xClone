@@ -2,11 +2,8 @@ import styled from "styled-components";
 import { Colors, breakpoints } from "../../styles";
 
 export const PostContainer = styled.div`
-    padding-top: 20px;
-    grid-column: 2 / 3; 
-    max-width: 900px;
-    min-width: 600px;
-    width: 100%;
+    padding: 20px;
+    width: 600px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -15,7 +12,8 @@ export const PostContainer = styled.div`
     }
     @media ( max-width: ${breakpoints.tablet}){
         margin-bottom: 72px;
-        min-width: 0;
+        width: 100%;
+        min-width: 100%;
     }
 `
 export const StyledHeader = styled.header`

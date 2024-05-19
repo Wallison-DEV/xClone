@@ -12,10 +12,11 @@ import { useState } from 'react';
 import { openModalFollow } from '../../Store/reducers/profile';
 import Retweet from '../../Components/Retweet';
 import Tweet from '../../Components/Tweet';
+import { PostContainer } from '../../Components/PostList/styles';
 
 const Profile = () => {
     const { id } = useParams();
-    const token = useSelector((state: RootReducer) => state.token);
+    const accessToken = localStorage.getItem("accessToken") || '';
     const isModalOpen = useSelector((state: RootReducer) => state.profile.modalOpen);
     const followedProfilesIds = useSelector((state: RootReducer) => state.profile.followedProfiles);
     const dispatch = useDispatch();
@@ -28,8 +29,8 @@ const Profile = () => {
     const followingsUser = (user && Array.isArray(user.following))
         ? user.following.map(u => ({ id: Number(u.id), username: u.username }))
         : [];
-    const { data: userPosts, isLoading: PostsLoading, error: PostsError } = useGetPostUserIdQuery({ id: Number(id), accessToken: token?.accessToken || '' });
-    const { data: myProfile } = useGetMyuserQuery(token?.accessToken || '');
+    const { data: userPosts, isLoading: PostsLoading, error: PostsError } = useGetPostUserIdQuery({ id: Number(id), accessToken });
+    const { data: myProfile } = useGetMyuserQuery(accessToken);
     const [followUser] = useFollowMutation();
     const [unfollowUser] = useUnfollowMutation();
 
@@ -59,9 +60,9 @@ const Profile = () => {
 
     const handleFollowProfile = (profileId: number) => {
         if (isProfileFollowed(profileId)) {
-            unfollowProfile(profileId, token?.accessToken || '', dispatch, unfollowUser);
+            unfollowProfile(profileId, accessToken, dispatch, unfollowUser);
         } else {
-            followProfile(profileId, token?.accessToken || '', dispatch, followUser);
+            followProfile(profileId, accessToken, dispatch, followUser);
         }
     };
 
@@ -109,15 +110,15 @@ const Profile = () => {
                         <span onClick={openFollowing}><span>{user.following.length}</span> seguindo </span>
                     </div>
                 </S.ProfileData>
-                <div>
+                <PostContainer>
                     {userPosts.length > 0 ? (
                         userPosts.map((post: (PostProps | RetweetProps)) => (
                             ('tweet_id' in post) ? (<Retweet key={post.id} props={post} />) : (<Tweet key={post.id} props={post} />)
                         ))
                     ) : (
-                        <div className="container margin-top">O usuário não possui postagens</div>
+                        <div className=" container margin-top">O usuário não possui postagens</div>
                     )}
-                </div>
+                </PostContainer>
             </div>
             {isModalOpen && <FollowList followersUser={followersUser} followingsUser={followingsUser} type={isFollowingList} />}
         </S.Profile >

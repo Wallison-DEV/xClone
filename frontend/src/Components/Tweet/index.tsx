@@ -28,8 +28,8 @@ type Props = {
 }
 
 const Tweet: React.FC<Props> = ({ props, modalDisabled }) => {
+    const accessToken = localStorage.getItem('accessToken') || ''
     const navigate = useNavigate();
-    const token = useSelector((state: RootReducer) => state.token);
     const myUserProfile = useSelector((state: RootReducer) => state.profile.myUser);
     const [addLike, { isLoading: isAddingLike }] = useAddLikeTweetMutation();
     const [liked, setLiked] = useState(
@@ -51,7 +51,7 @@ const Tweet: React.FC<Props> = ({ props, modalDisabled }) => {
         const isLocalMedia = props.media.startsWith('/media/post_media');
 
         if (isLocalMedia) {
-            const mediaUrl = props.media.replace('/media', 'http://wallison.pythonanywhere.com/media');
+            const mediaUrl = props.media.replace('/media', 'http://localhost:8000/media');
 
             const mediaType = mediaUrl.split('.').pop()?.toLowerCase();
 
@@ -93,7 +93,7 @@ const Tweet: React.FC<Props> = ({ props, modalDisabled }) => {
 
     const handleLikeClick = async (postId: number) => {
         try {
-            await addLike({ postId, accessToken: token?.accessToken || '' });
+            await addLike({ postId, accessToken });
             if (liked === true) {
                 setLiked(false)
                 setLikeCount(likeCount - 1)
@@ -130,7 +130,7 @@ const Tweet: React.FC<Props> = ({ props, modalDisabled }) => {
     }
 
     return (
-        <S.PostContainer key={props.id}>
+        <S.PostDiv key={props.id}>
             <div onClick={() => handleUserClick(props.user.id)}>
                 <S.UserInfo>
                     <img src={userImg} alt="" />
@@ -197,7 +197,7 @@ const Tweet: React.FC<Props> = ({ props, modalDisabled }) => {
                     <div className='overlay' onClick={() => handleOpenPostRetweetModal()} />
                 </Modal>
             }
-        </S.PostContainer>
+        </S.PostDiv>
     );
 };
 

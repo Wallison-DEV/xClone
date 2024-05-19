@@ -1,4 +1,3 @@
-import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 
 import * as S from '../Postdetails/styles'
@@ -7,7 +6,6 @@ import { PostForm, PreviewImage } from '../PostForm/styles'
 import { LoginDiv } from "../Login/styles"
 
 import { useDoRepostMutation } from "../../Services/api";
-import { RootReducer } from "../../Store";
 
 import userImg from '../../assets/img/user.png';
 import pictureIcon from '../../assets/icons/pictureIcon.png'
@@ -21,7 +19,6 @@ interface PostRetweetProps {
 }
 
 const PostRetweet: React.FC<PostRetweetProps> = ({ post, onClose }) => {
-    const token = useSelector((state: RootReducer) => state.token)
     const [doRepost, { isError, error, isSuccess }] = useDoRepostMutation();
     const [textRepostValue, setTextRepostValue] = useState('')
     const [sourceRepostValue, setSourceRepostValue] = useState<File | null>(null)
@@ -45,9 +42,10 @@ const PostRetweet: React.FC<PostRetweetProps> = ({ post, onClose }) => {
             const content = String(textRepostValue);
             const media = sourceRepostValue || null;
             const tweet = post.id;
+            const accessToken = localStorage.getItem("accessToken") || '';
 
             const response = await doRepost({
-                content, tweet, media, accessToken: token.accessToken || '',
+                content, tweet, media, accessToken,
             });
             console.log('response: ', response)
 

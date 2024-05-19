@@ -1,4 +1,3 @@
-import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom"
 
@@ -8,9 +7,7 @@ import { PreviewImage, PostForm } from "../PostForm/styles";
 import { PostSource } from "../Tweet/styles";
 
 import { useDoCommentMutation } from "../../Services/api";
-import { RootReducer } from "../../Store";
 import { timePost } from '../../Utils'
-
 
 import userImg from '../../assets/img/user.png';
 import pictureIcon from '../../assets/icons/pictureIcon.png'
@@ -26,7 +23,6 @@ interface PostDetailsProps {
 }
 
 const PostDetails: React.FC<PostDetailsProps> = ({ post, onClose }) => {
-    const token = useSelector((state: RootReducer) => state.token)
     const navigate = useNavigate()
     const [doComment, { isError, error, isSuccess }] = useDoCommentMutation();
     const [textCommentValue, setTextCommentValue] = useState('')
@@ -81,9 +77,9 @@ const PostDetails: React.FC<PostDetailsProps> = ({ post, onClose }) => {
             const content_type = post.hasOwnProperty('tweet_id') ? 7 : 6;
             const object_id = String(post.id);
             const media = sourceCommentValue || null;
-
+            const accessToken = localStorage.getItem("accessToken") || '';
             await doComment({
-                content, content_type, object_id, media, accessToken: token.accessToken || '',
+                content, content_type, object_id, media, accessToken,
             });
             setSourceCommentValue(null);
             setTextCommentValue('');

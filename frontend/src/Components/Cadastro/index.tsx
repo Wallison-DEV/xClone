@@ -18,7 +18,7 @@ const Cadastro = () => {
         e.preventDefault();
         const formData = { username, email, password };
         try {
-            const response = await fetch('http://wallison.pythonanywhere.com/users/', {
+            const response = await fetch('http://localhost:8000/users/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

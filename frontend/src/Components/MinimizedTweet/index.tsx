@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 
-import { PostContainer, PostContent, UserInfo } from "../Tweet/styles"
+import { PostContent, UserInfo } from "../Tweet/styles"
+import { PostContainer } from "../PostList/styles"
 
 import { timePost } from '../../Utils'
 

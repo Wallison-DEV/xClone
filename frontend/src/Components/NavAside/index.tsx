@@ -1,8 +1,5 @@
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-
-import { clearTokens } from "../../Store/reducers/token";
-import { RootReducer } from "../../Store";
+import { useDispatch } from "react-redux";
 
 import * as S from './styles'
 import { Modal } from "../../styles";
@@ -16,13 +13,14 @@ import { clearFollowed, updateMyUser } from "../../Store/reducers/profile";
 import PostForm from "../PostForm";
 
 import Button from '../Button'
+import { falseValidate } from "../../Store/reducers/entry";
 
 const NavAside = () => {
-    const token = useSelector((state: RootReducer) => state.token)
+    const accessToken = localStorage.getItem('accessToken') || ''
     const dispatch = useDispatch()
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const [isPostModalOpen, setIsPostModalOpen] = useState(false)
-    const { data: myProfile } = useGetMyuserQuery(token.accessToken || '')
+    const { data: myProfile } = useGetMyuserQuery(accessToken)
 
     useEffect(() => {
         dispatch(updateMyUser(myProfile))
@@ -30,9 +28,9 @@ const NavAside = () => {
 
     const handleLogout = async () => {
         try {
-            const refreshToken = token.refreshToken;
+            const refreshToken = localStorage.getItem('refreshToken');
             if (refreshToken) {
-                const responseLogout = await fetch('http://wallison.pythonanywhere.com/api/logout/', {
+                const responseLogout = await fetch('http://localhost:8000/api/logout/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -43,7 +41,10 @@ const NavAside = () => {
                 });
                 console.log(responseLogout);
             }
-            dispatch(clearTokens())
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            localStorage.removeItem("accessTokenExp");
+            dispatch(falseValidate())
             dispatch(clearFollowed())
         } catch (error: any) {
             console.error('Error logging out:', error.message);
