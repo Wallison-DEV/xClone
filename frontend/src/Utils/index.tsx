@@ -13,6 +13,7 @@ export const scheduleTokenRefresh = async (timeUntilExpiration: number, refreshT
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
         localStorage.removeItem("accessTokenExp");
+        window.location.reload()
         dispatch(clearFollowed());
         return;
     }

@@ -7,8 +7,8 @@ import Home from './Pages/Home';
 import { verifyAuthenticated } from './Utils';
 import Profile from './Pages/Profile';
 
-import ProfileAside from './Components/ProfilesAside'
-import NavAside from './Components/NavAside'
+import ProfileAside from './Components/ProfilesAside';
+import NavAside from './Components/NavAside';
 import Search from './Pages/Search';
 
 import { Container } from './styles';
@@ -20,32 +20,37 @@ const Rotas = () => {
     const isAuthenticated = useSelector((state: RootReducer) => state.entry.isValidate);
     const dispatch = useDispatch();
 
-    useEffect(() => {
-        const checkAuthentication = async () => {
-            const accessToken = localStorage.getItem('accessToken');
-            const accessTokenExp = localStorage.getItem('accessTokenExp');
-            try {
-                const isSuccess = await verifyAuthenticated(accessToken, accessTokenExp);
-                if (isSuccess) {
-                    console.log('Autenticação bem-sucedida');
-                    dispatch(trueValidate());
-                } else {
-                    console.log('Falha na autenticação');
-                    dispatch(falseValidate());
-                }
-            } catch (error) {
-                console.error('Erro ao verificar autenticação:', error);
+    const checkAuthentication = async () => {
+        const accessToken = localStorage.getItem('accessToken');
+        console.log('checked')
+        const accessTokenExp = localStorage.getItem('accessTokenExp');
+        try {
+            const isSuccess = await verifyAuthenticated(accessToken, accessTokenExp);
+            if (isSuccess) {
+                console.log('Autenticação bem-sucedida');
+                dispatch(trueValidate());
+            } else {
+                console.log('Falha na autenticação');
                 dispatch(falseValidate());
             }
+        } catch (error) {
+            console.error('Erro ao verificar autenticação:', error);
+            dispatch(falseValidate());
+        }
+    };
+
+    useEffect(() => {
+        checkAuthentication();
+
+        const handleStorageChange = () => {
+            checkAuthentication();
         };
 
-        const pollingInterval = setInterval(() => {
-            checkAuthentication();
-        }, 5000);
+        window.addEventListener('storage', handleStorageChange);
 
         return () => {
-            clearInterval(pollingInterval);
-        };
+            window.removeEventListener('storage', handleStorageChange);
+        }
     }, [dispatch]);
 
     return (

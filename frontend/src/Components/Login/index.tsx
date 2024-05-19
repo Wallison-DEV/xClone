@@ -38,7 +38,7 @@ const Login = () => {
                 return;
             }
             const { access: accessToken, exp: tokenExp, refresh: refreshToken } = response;
-            // dispatch(trueValidate())
+            dispatch(trueValidate())
             localStorage.setItem('accessToken', accessToken);
             localStorage.setItem('accessTokenExp', tokenExp.toString());
             localStorage.setItem('refreshToken', refreshToken);
