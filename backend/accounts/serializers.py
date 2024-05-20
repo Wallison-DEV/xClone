@@ -20,7 +20,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AccountModel
-        fields = ['id', 'username', 'email', 'bio', 'followers', 'following', 'created_at']
+        fields = ['id', 'username', 'email', 'bio', 'followers', 'following', 'created_at', 'arroba', 'profile_image', 'background_image']
         extra_kwargs = {'password': {'write_only': True}}
 
     def to_representation(self, instance):
@@ -28,14 +28,6 @@ class UserSerializer(serializers.ModelSerializer):
         data['followers'] = FollowerSerializer(instance.followers.all(), many=True).data
         data['following'] = FollowerSerializer(instance.following.all(), many=True).data
         return data
-
-    def create(self, validated_data):
-        user = AccountModel.objects.create_user(
-            username=validated_data['username'],
-            email=validated_data['email'],
-            password=validated_data['password'],
-        )
-        return user
 
 class CustomTokenObtainPairSerializer(serializers.Serializer):
     username_or_email = serializers.CharField()

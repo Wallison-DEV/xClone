@@ -1,23 +1,28 @@
+import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
 import { RootReducer } from '../../Store';
+import { openModalEdit, openModalFollow } from '../../Store/reducers/profile';
 import { useGetUserByIdQuery, useGetPostUserIdQuery, useFollowMutation, useUnfollowMutation, useGetMyuserQuery } from '../../Services/api';
-import * as S from './styles';
-import profileImg from '../../assets/img/profile_avatar.png';
-import Button from '../../Components/Button';
 import { unfollowProfile, followProfile } from '../../Utils';
+
+import * as S from './styles';
+
+import profileImg from '../../assets/img/profile_avatar.png';
+
+import Button from '../../Components/Button';
 import FollowList from '../../Components/FollowList';
-import { useState } from 'react';
-import { openModalFollow } from '../../Store/reducers/profile';
 import Retweet from '../../Components/Retweet';
 import Tweet from '../../Components/Tweet';
 import { PostContainer } from '../../Components/PostList/styles';
+import ProfileForm from '../../Components/ProfileForm';
 
 const Profile = () => {
     const { id } = useParams();
     const accessToken = localStorage.getItem("accessToken") || '';
-    const isModalOpen = useSelector((state: RootReducer) => state.profile.modalOpen);
+    const isModalFollowOpen = useSelector((state: RootReducer) => state.profile.modalFollowOpen);
+    const isModalEditOpen = useSelector((state: RootReducer) => state.profile.modalEditProfileOpen);
     const followedProfilesIds = useSelector((state: RootReducer) => state.profile.followedProfiles);
     const dispatch = useDispatch();
 
@@ -74,15 +79,18 @@ const Profile = () => {
         setIsFollowingList(false)
         dispatch(openModalFollow())
     }
+    const openEdit = () => {
+        dispatch(openModalEdit())
+    }
 
     return (
         <S.Profile>
             <div>
-                <S.ProfilePicture>
-                    <img src={profileImg} alt="" />
+                <S.ProfilePicture style={{ background: myProfile?.background_image ? `url(${myProfile?.background_image})` : 'rgb(207, 217, 222)' }}>
+                    <img src={myProfile?.profile_image ? myProfile?.profile_image : profileImg} alt="Foto de perfil" />
                     <S.HeaderButton>
                         {myProfile?.id === Number(id) ? (
-                            <button className="configureButton"></button>
+                            <button onClick={openEdit} className="configureButton"></button>
                         ) : (
                             <>
                                 {isProfileFollowed(user.id) ? (
@@ -101,7 +109,7 @@ const Profile = () => {
                 <S.ProfileData>
                     <div>
                         <h3>{user.username}</h3>
-                        <h4>@{user.username}</h4>
+                        <h4>{user.arroba}</h4>
                     </div>
                     <p>{user.bio}</p>
                     <p>Ingressou em: {formatDate(user.created_at)}</p>
@@ -120,7 +128,8 @@ const Profile = () => {
                     )}
                 </PostContainer>
             </div>
-            {isModalOpen && <FollowList followersUser={followersUser} followingsUser={followingsUser} type={isFollowingList} />}
+            {isModalFollowOpen && <FollowList followersUser={followersUser} followingsUser={followingsUser} type={isFollowingList} />}
+            {isModalEditOpen && <ProfileForm profile={myProfile} />}
         </S.Profile >
     );
 };

@@ -32,7 +32,7 @@ export const InputDiv = styled.div`
         font-weight: 400;
         color: ${Colors.blue};
     }
-    input {
+    textarea, input {
         outline: none; 
         border: none;
         width: 100%;

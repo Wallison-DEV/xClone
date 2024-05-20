@@ -22,7 +22,6 @@ const Rotas = () => {
 
     const checkAuthentication = async () => {
         const accessToken = localStorage.getItem('accessToken');
-        console.log('checked')
         const accessTokenExp = localStorage.getItem('accessTokenExp');
         try {
             const isSuccess = await verifyAuthenticated(accessToken, accessTokenExp);
@@ -43,7 +42,7 @@ const Rotas = () => {
         checkAuthentication();
 
         const handleStorageChange = () => {
-            checkAuthentication();
+            window.addEventListener('storage', checkAuthentication);
         };
 
         window.addEventListener('storage', handleStorageChange);
@@ -51,7 +50,7 @@ const Rotas = () => {
         return () => {
             window.removeEventListener('storage', handleStorageChange);
         }
-    }, [dispatch]);
+    }, []);
 
     return (
         <>

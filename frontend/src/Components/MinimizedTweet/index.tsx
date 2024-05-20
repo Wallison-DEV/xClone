@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 
 import { PostContent, UserInfo } from "../Tweet/styles"
-import { PostContainer } from "../PostList/styles"
+import { PostDiv } from "../Tweet/styles"
 
 import { timePost } from '../../Utils'
 
@@ -18,7 +18,7 @@ const MinimizedTweet = (props: PostProps) => {
         : props.content;
 
     return (
-        <PostContainer>
+        <PostDiv>
             <div onClick={() => handleUserClick(props.user.id)}>
                 <UserInfo>
                     <img src={userImg} alt="" />
@@ -27,7 +27,7 @@ const MinimizedTweet = (props: PostProps) => {
                 </UserInfo>
             </div>
             <PostContent>{limitedContent}</PostContent>
-        </PostContainer>
+        </PostDiv>
     )
 }
 

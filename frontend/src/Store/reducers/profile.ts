@@ -1,12 +1,14 @@
 import { PayloadAction, createSlice} from '@reduxjs/toolkit'
 
 type ProfileProps = {
-    modalOpen : boolean
+    modalFollowOpen : boolean
+    modalEditProfileOpen : boolean
     followedProfiles: number[]
     myUser: any
 }
 const initialState:ProfileProps = {
-    modalOpen: false,
+    modalFollowOpen: false,
+    modalEditProfileOpen : false,
     followedProfiles: [], 
     myUser: null,
 }
@@ -31,13 +33,19 @@ const profileSlice = createSlice({
             state.followedProfiles = [];
         },
         openModalFollow(state){
-            state.modalOpen = true;
+            state.modalFollowOpen = true;
         },
         closeModalFollow(state) {
-            state.modalOpen = false;
+            state.modalFollowOpen = false;
+        },
+        openModalEdit(state){
+            state.modalEditProfileOpen = true;
+        },
+        closeModalEdit(state) {
+            state.modalEditProfileOpen = false;
         },
     }
 })
-export const { updateFollowedProfiles, clearFollowed, openModalFollow, closeModalFollow, updateMyUser } = profileSlice.actions;
+export const { updateFollowedProfiles, clearFollowed, openModalFollow, closeModalFollow, updateMyUser, closeModalEdit, openModalEdit } = profileSlice.actions;
 
 export default profileSlice.reducer;
