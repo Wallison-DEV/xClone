@@ -22,7 +22,9 @@ class AccountModelViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         username_query = request.query_params.get('username', '')
         if username_query:
-            filtered_user = AccountModel.objects.filter(username__icontains=username_query)
+            filtered_user = AccountModel.objects.filter(
+                models.Q(username__icontains=username_query) | models.Q(arroba__icontains=username_query)
+            )
         else:
             filtered_user = self.get_queryset()
 
@@ -58,10 +60,15 @@ class AccountModelViewSet(viewsets.ModelViewSet):
         username = request.data.get('username')
         email = request.data.get('email')
         password = request.data.get('password')
+        arroba = request.data.get('arroba')
+        
+        if arroba and not arroba.startswith('@'):
+            arroba = '@' + arroba
 
         user = AccountModel.objects.create_user(
             username=username,
             email=email,
+            arroba=arroba,
             password=password,
             date_joined=timezone.now()
         )
@@ -72,13 +79,14 @@ class AccountModelViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save()
         
-    @action(detail=True, methods=['patch'], permission_classes=[IsAuthenticated])
-    def update_bio(self, request, pk=None):
-        user = self.get_object()
-        bio = request.data.get('bio', user.bio)
-        user.bio = bio
-        user.save()
-        return Response({'id': user.id, 'bio': user.bio}, status=status.HTTP_200_OK)
+    @action(detail=False, methods=['patch'], permission_classes=[IsAuthenticated])
+    def update_profile(self, request):
+        user = request.user
+        serializer = self.get_serializer(user, data=request.data, partial=True)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
     def follow(self, request, pk=None):

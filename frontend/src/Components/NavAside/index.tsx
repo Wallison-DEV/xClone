@@ -88,7 +88,7 @@ const NavAside = () => {
                         <S.ProfileDiv>
                             {isMenuOpen && myProfile !== null && (
                                 <S.ExitButton variant="light" onClick={handleLogout}>
-                                    Sair de @{myProfile?.username}
+                                    Sair de {myProfile?.arroba}
                                 </S.ExitButton>
                             )}
                             <S.MyProfile onClick={() => setIsMenuOpen(!isMenuOpen)}>
@@ -96,7 +96,7 @@ const NavAside = () => {
                                     <img src={userIcon} alt="" />
                                     <div className="userInfos">
                                         <p>{myProfile?.username || "Nome de Usuário"}</p>
-                                        <span>@{myProfile?.username || "Nome de Usuário"}</span>
+                                        <span>{myProfile?.arroba || "Nome de Usuário"}</span>
                                     </div>
                                 </div>
                                 <span>...</span>

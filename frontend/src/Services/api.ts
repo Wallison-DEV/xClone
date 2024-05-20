@@ -189,8 +189,19 @@ const api = createApi({
         getPostById: builder.query<(PostProps), number>({
             query: (id) => `posts/${id}/`, 
         }),
+        updateProfile : builder.mutation({
+            query: ({ body, accessToken }) => ({
+                url: `update-profile/`,
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                },
+                body
+            }),
+        }),
     })
-});
+})
 
 export const { 
     useDoLoginMutation, 
@@ -210,6 +221,7 @@ export const {
     useAddLikeRetweetMutation,
     useGetPostByIdQuery,
     useDoRepostMutation,
+    useUpdateProfileMutation,
 } = api;
 
 export default api;

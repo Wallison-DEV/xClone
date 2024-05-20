@@ -17,4 +17,5 @@ urlpatterns = [
     path('other-unfollowed-users/', AccountModelViewSet.as_view({'get': 'other_unfollowed_users'}), name='other_unfollowed-users'),
     path('users/<int:pk>/follow/', AccountModelViewSet.as_view({'post': 'follow'}), name='follow_user'),
     path('users/<int:pk>/unfollow/', AccountModelViewSet.as_view({'post': 'unfollow'}), name='unfollow_user'),
+    path('update-profile/', AccountModelViewSet.as_view({'patch': 'update_profile'}), name='update_profile'),
 ]

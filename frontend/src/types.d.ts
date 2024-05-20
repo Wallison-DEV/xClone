@@ -60,9 +60,12 @@ declare interface Comment {
 declare type UserProfile = {
     id: number;
     username: string;
+    arroba: string;
     email: string;
     bio: string;
     followers: { id: string; username: string }[];
     following: { id: string; username: string }[];
+    profile_image: string | null;
+    background_image: string | null;
     created_at: string;
 };

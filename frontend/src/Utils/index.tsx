@@ -7,53 +7,52 @@ export const calculateTimeUntilExpiration = (expirationTimeInSeconds: number) =>
     return expirationTimeInSeconds - nowInSeconds;
 };
 
-export const scheduleTokenRefresh = async (timeUntilExpiration: number, refreshToken: string, dispatch: Dispatch<any>, attempt: number) => {
-    if (timeUntilExpiration < 3 || attempt >= 3) {
-        console.error('Máximo de tentativas de renovação alcançado.');
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        localStorage.removeItem("accessTokenExp");
-        window.location.reload()
-        dispatch(clearFollowed());
-        return;
-    }
-    setTimeout(async () => {
-        const refresh = refreshToken;
-        if (refresh) {
-            try {
-                const response = await fetch('http://localhost:8000/api/token/refresh/', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ refresh: refresh }),
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    const newAccessToken = data.access;
-                    const newTokenExp = data.exp;
-                    const updatedRefreshToken = refresh;
-                    localStorage.setItem('accessToken', newAccessToken);
-                    localStorage.setItem('accessTokenExp', newTokenExp);
-                    localStorage.setItem('refreshToken', updatedRefreshToken);
-                    const updatedTimeUntilExpiration = calculateTimeUntilExpiration(newTokenExp);
-                    scheduleTokenRefresh(updatedTimeUntilExpiration, updatedRefreshToken, dispatch, 0);
-                } else {
-                    console.error('Falha ao renovar token:', response.status);
-                    if (refreshToken) {
-                        scheduleTokenRefresh(timeUntilExpiration, refreshToken, dispatch, attempt + 1);
-                    }
-                    return
-                }
-            } catch (error: any) {
-                console.error('Erro ao renovar token:', error.message);
-                if (refreshToken) {
-                    scheduleTokenRefresh(timeUntilExpiration, refreshToken, dispatch, attempt + 1);
-                }
-                return
-            }
-        }
-    }, timeUntilExpiration * 900);
-};
-
+// export const scheduleTokenRefresh = async (timeUntilExpiration: number, refreshToken: string, dispatch: Dispatch<any>, attempt: number) => {
+//     if (timeUntilExpiration < 3 || attempt >= 3) {
+//         console.error('Máximo de tentativas de renovação alcançado.');
+//         localStorage.removeItem("accessToken");
+//         localStorage.removeItem("refreshToken");
+//         localStorage.removeItem("accessTokenExp");
+//         window.location.reload()
+//         dispatch(clearFollowed());
+//         return;
+//     }
+//     setTimeout(async () => {
+//         const refresh = refreshToken;
+//         if (refresh) {
+//             try {
+//                 const response = await fetch('http://localhost:8000/api/token/refresh/', {
+//                     method: 'POST',
+//                     headers: { 'Content-Type': 'application/json' },
+//                     body: JSON.stringify({ refresh: refresh }),
+//                 });
+//                 if (response.ok) {
+//                     const data = await response.json();
+//                     const newAccessToken = data.access;
+//                     const newTokenExp = data.exp;
+//                     const updatedRefreshToken = refresh;
+//                     localStorage.setItem('accessToken', newAccessToken);
+//                     localStorage.setItem('accessTokenExp', newTokenExp);
+//                     localStorage.setItem('refreshToken', updatedRefreshToken);
+//                     const updatedTimeUntilExpiration = calculateTimeUntilExpiration(newTokenExp);
+//                     scheduleTokenRefresh(updatedTimeUntilExpiration, updatedRefreshToken, dispatch, 0);
+//                 } else {
+//                     console.error('Falha ao renovar token:', response.status);
+//                     if (refreshToken) {
+//                         scheduleTokenRefresh(timeUntilExpiration, refreshToken, dispatch, attempt + 1);
+//                     }
+//                     return
+//                 }
+//             } catch (error: any) {
+//                 console.error('Erro ao renovar token:', error.message);
+//                 if (refreshToken) {
+//                     scheduleTokenRefresh(timeUntilExpiration, refreshToken, dispatch, attempt + 1);
+//                 }
+//                 return
+//             }
+//         }
+//     }, timeUntilExpiration * 900);
+// };
 
 const isTokenExpired = (exp: number) => {
     const tokenExp = exp;

@@ -14,7 +14,6 @@ export const Profile = styled.div`
 
 export const ProfilePicture = styled.div`
     position: relative;
-    background-color: gray;
     height: 200px;
     margin-bottom: 48px;
     width: 100%;

@@ -10,13 +10,14 @@ import XLogo from '../../assets/img/twitter-logo.png'
 const Cadastro = () => {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
+    const [arroba, setArroba] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const dispatch = useDispatch();
 
     const handleSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
-        const formData = { username, email, password };
+        const formData = { username, email, arroba, password };
         try {
             const response = await fetch('http://localhost:8000/users/', {
                 method: 'POST',
@@ -30,10 +31,11 @@ const Cadastro = () => {
                 alert('Perfil registrado com sucesso!');
                 setEmail('')
                 setUsername('')
+                setArroba('')
                 setPassword('')
             } else {
                 const data = await response.json();
-                alert(`Erro ao registrar perfil: ${data.error}${email}${username}${password}`);
+                alert(`Erro ao registrar perfil: ${data.error} - ${email} - ${username} - ${arroba} - ${password}`);
             }
         } catch (error) {
             setErrorMessage('Falha ao fazer registro.Por favor, verifique suas credenciais.');
@@ -59,6 +61,10 @@ const Cadastro = () => {
                         <InputDiv>
                             <span>Email:</span>
                             <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                        </InputDiv>
+                        <InputDiv>
+                            <span>Arroba</span>
+                            <input type="text" value={arroba} onChange={(e) => setArroba(e.target.value)} required />
                         </InputDiv>
                         <InputDiv>
                             <span>Senha:</span>

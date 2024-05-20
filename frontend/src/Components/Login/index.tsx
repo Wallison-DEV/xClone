@@ -1,7 +1,8 @@
 import { useDispatch } from 'react-redux';
 import { useCallback, useState } from 'react';
 
-import { calculateTimeUntilExpiration, scheduleTokenRefresh } from '../../Utils';
+// import { calculateTimeUntilExpiration, scheduleTokenRefresh } from '../../Utils';
+import { calculateTimeUntilExpiration } from '../../Utils';
 import { useDoLoginMutation } from '../../Services/api';
 
 import XLogo from '../../assets/img/twitter-logo.png'
@@ -43,7 +44,7 @@ const Login = () => {
             localStorage.setItem('accessTokenExp', tokenExp.toString());
             localStorage.setItem('refreshToken', refreshToken);
             const timeUntilExpiration = calculateTimeUntilExpiration(tokenExp);
-            scheduleTokenRefresh(timeUntilExpiration, refreshToken, dispatch, 0);
+            // scheduleTokenRefresh(timeUntilExpiration, refreshToken, dispatch, 0);
         } catch (error: any) {
             console.error('Error logging in:', error.message);
             setErrorMessage('Falha ao fazer login. Por favor, verifique suas credenciais.');

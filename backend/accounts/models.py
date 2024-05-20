@@ -3,6 +3,9 @@ from django.db import models
 
 class AccountModel(AbstractUser):
     bio = models.TextField(max_length=500, blank=True)
+    arroba = models.TextField(max_length=20, unique=True)
+    profile_image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
+    background_image = models.ImageField(upload_to='background_images/', blank=True, null=True)
     followers = models.ManyToManyField('self', symmetrical=False, related_name='followers_set', blank=True)
     following = models.ManyToManyField('self', symmetrical=False, related_name='following_set', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
