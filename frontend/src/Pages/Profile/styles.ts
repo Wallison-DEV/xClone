@@ -17,6 +17,7 @@ export const ProfilePicture = styled.div`
     height: 200px;
     margin-bottom: 48px;
     width: 100%;
+    background-size: cover;
 
     img {
         position: absolute;

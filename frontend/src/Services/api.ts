@@ -195,6 +195,27 @@ const api = createApi({
                 method: 'PATCH',
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,
+                },
+                body
+            }),
+        }),
+        updateTweet : builder.mutation({
+            query: ({ body, accessToken }) => ({
+                url: `post/update-tweet/`,
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                },
+                body
+            }),
+        }),
+        updateRetweet : builder.mutation({
+            query: ({ body, accessToken }) => ({
+                url: `retweet/update-retweet/`,
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
                     'Content-Type': 'application/json',
                 },
                 body
@@ -222,6 +243,8 @@ export const {
     useGetPostByIdQuery,
     useDoRepostMutation,
     useUpdateProfileMutation,
+    useUpdateTweetMutation,
+    useUpdateRetweetMutation,
 } = api;
 
 export default api;

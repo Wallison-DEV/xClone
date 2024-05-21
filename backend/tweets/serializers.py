@@ -15,7 +15,7 @@ class CommentSerializer(serializers.ModelSerializer):
         read_only_fields = ['created_at']
 
     def get_user(self, obj):
-        return {'id': obj.user.id, 'username': obj.user.username}
+        return {'id': obj.user.id, 'username': obj.user.username, 'profile_image': obj.user.profile_image.url if obj.user.profile_image else ''}    
 
     def create(self, validated_data):
         user = self.context['request'].user
@@ -41,7 +41,7 @@ class PostSerializer(serializers.ModelSerializer):
         fields = ['id','user','media', 'content', 'created_at', 'likes', 'comments', 'retweets']
         
     def get_user(self, obj):
-        return {'id': obj.user.id, 'username': obj.user.username}
+        return {'id': obj.user.id, 'username': obj.user.username, 'profile_image': obj.user.profile_image.url if obj.user.profile_image else ''}    
         
     def get_likes(self, obj):
         likes_count = obj.likes.count()
@@ -103,7 +103,7 @@ class RetweetSerializer(serializers.ModelSerializer):
         fields = ['id','user','media', 'content', 'created_at', 'likes', 'comments']
         
     def get_user(self, obj):
-        return {'id': obj.user.id, 'username': obj.user.username}
+        return {'id': obj.user.id, 'username': obj.user.username, 'profile_image': obj.user.profile_image.url if obj.user.profile_image else ''}    
         
     def create(self, validated_data):
         tweet_id = self.context['request'].data.get('tweet')

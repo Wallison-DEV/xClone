@@ -3,14 +3,14 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import { RootReducer } from '../../Store';
-import { timePost } from '../../Utils'
+import { convertUrl, timePost } from '../../Utils'
 
 import { useAddLikeRetweetMutation, useGetPostByIdQuery } from '../../Services/api';
 
 import { Modal } from '../../styles';
 import * as S from '../Tweet/styles';
 
-import userImg from '../../assets/img/user.png';
+import userIcon from '../../assets/img/profile_avatar.png';
 import commentIcon from '../../assets/icons/comment.png';
 import likeIcon from '../../assets/icons/like.png';
 import likedIcon from '../../assets/icons/liked.png';
@@ -19,7 +19,6 @@ import LikedByList from '../LikedByList';
 import PostDetails from '../Postdetails';
 import MinimizedTweet from '../MinimizedTweet';
 import { ImageDiv } from '../Tweet/styles';
-
 
 type Props = {
     props: RetweetProps;
@@ -127,7 +126,7 @@ const Retweet: React.FC<Props> = ({ props, modalDisabled }) => {
         <S.PostDiv key={props.id}>
             <div onClick={() => handleUserClick(props.user.id)}>
                 <S.UserInfo>
-                    <img src={userImg} alt="" />
+                    <img src={props.user.profile_image ? convertUrl(props.user.profile_image) : userIcon} alt="" />
                     <h2>{props.user.username}</h2>
                     <span>@{props.user.username} · {timePost(props.created_at)}</span>
                 </S.UserInfo>

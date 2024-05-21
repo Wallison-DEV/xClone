@@ -40,6 +40,7 @@ export const Profile = styled.div`
             width: 40px;
             height: 40px;
             margin-right: 12px;
+            border-radius: 50%;
         }
     }
     &:first-of-type {

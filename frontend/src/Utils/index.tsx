@@ -151,3 +151,11 @@ export const timePost = (createdAt: string) => {
         return `${minutes} minuto${minutes === 1 ? '' : 's'}`;
     }
 };
+
+export const convertUrl = (url: string) => {
+    if (url.startsWith('http://localhost')) {
+        return url;
+    } else {
+        return `http://localhost:8000${url}`;
+    }
+}

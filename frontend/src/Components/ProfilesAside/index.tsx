@@ -5,7 +5,6 @@ import { useListUnfollowedUsersQuery } from '../../Services/api'
 import UsersList from '../UsersList'
 import { useState } from 'react'
 
-
 const ProfileAside = () => {
     const accessToken = localStorage.getItem("accessToken") || ''
     const { data: profilesUnfollowed } = useListUnfollowedUsersQuery(accessToken)

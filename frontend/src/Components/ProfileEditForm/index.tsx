@@ -6,14 +6,14 @@ import { SecondTitle } from '../../styles'
 import { Modal } from "../../styles"
 import * as S from "./styles"
 
-import { closeModalEdit } from "../../Store/reducers/profile"
+import { closeModalEditProfile } from "../../Store/reducers/profile"
 
 import profileImg from '../../assets/img/profile_avatar.png';
 import { MdAddAPhoto } from "react-icons/md";
 import Button from "../Button";
 import { InputDiv } from "../Login/styles";
 import { useUpdateProfileMutation } from "../../Services/api";
-import { useNavigate } from "react-router-dom";
+import { convertUrl } from "../../Utils";
 
 interface ProfileFormProps {
     profile: UserProfile | undefined;
@@ -44,37 +44,61 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ profile }) => {
         setIsEditingImg(true)
     };
 
+    const dataURLtoBlob = (dataURL: string) => {
+        const arr = dataURL.split(',');
+        const mime = arr[0].match(/:(.*?);/)![1];
+        const bstr = atob(arr[1]);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+        while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new Blob([u8arr], { type: mime });
+    };
+
     const handleSave = (typeImageProfile: boolean) => {
-        if (typeImageProfile) {
-            if (editor) {
-                const canvas = editor.getImageScaledToCanvas();
-                setProfileImage(canvas.toDataURL())
-                setIsEditingImg(false)
+        if (editor) {
+            const canvas = editor.getImageScaledToCanvas();
+
+            const dataURL = canvas.toDataURL('image/png');
+
+            const blob = dataURLtoBlob(dataURL);
+
+            const file = new File([blob], "profile_image.png", { type: "image/png" });
+
+            if (typeImageProfile) {
+                setProfileImage(file);
+            } else {
+                setBackgroundImage(file);
             }
-        } else {
-            if (editor) {
-                const canvas = editor.getImageScaledToCanvas();
-                setBackgroundImage(canvas.toDataURL())
-                setIsEditingImg(false)
-            }
+            setIsEditingImg(false);
         }
     };
 
     const handleSubmit = async () => {
+        const formData = new FormData();
+        if (profileImage !== (profile?.profile_image || profileImg)) {
+            formData.append("profile_image", profileImage);
+        }
+        if (backgroundImage && backgroundImage !== (profile?.background_image || null)) {
+            formData.append("background_image", backgroundImage);
+        }
+        if (bio !== (profile?.bio || '')) {
+            formData.append("bio", bio);
+        }
+        if (arroba !== (profile?.arroba || '')) {
+            formData.append("arroba", arroba);
+        }
+
         try {
             const response = await profilePurchase({
-                body: JSON.stringify({
-                    profileImage: profileImage,
-                    backgroundImage: backgroundImage,
-                    bio: bio,
-                    arroba: arroba,
-                }),
-                accessToken: accessToken,
+                body: formData,
+                accessToken,
             });
-            if (response) {
-                console.log(JSON.stringify(response))
-                dispatch(closeModalEdit());
-            }
+            console.log(response)
+            // if (response.data && response.data.isSuccess) {
+            //     dispatch(closeModalEditProfile());
+            // }
         } catch (error) {
             console.error('Erro ao enviar o formulário:', error);
         }
@@ -83,9 +107,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ profile }) => {
     const handleNextPage = () => {
         setPageProfileForm(pageProfileForm + 1)
     }
-    const handleBeforePage = () => {
-        setPageProfileForm(pageProfileForm - 1)
-    }
+    // const handleBeforePage = () => {
+    //     setPageProfileForm(pageProfileForm - 1)
+    // }
 
     const isAltered = () => {
         if (profileImage !== (profile?.profile_image || profileImg)) {
@@ -137,7 +161,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ profile }) => {
                                     ) : (
                                         <>
                                             <S.AbsoluteImg>
-                                                <img src={profileImage.toString()} alt="" />
+                                                <img src={profileImage !== profileImg ? (typeof profileImage === 'string' ? convertUrl(profileImage) : URL.createObjectURL(profileImage)) : profileImg} alt="Foto de perfil" />
                                                 <label htmlFor="fileInput"><MdAddAPhoto size={28} /></label>
                                                 <input id="fileInput" type="file" accept="image/*" onChange={handleProfileImageChange} />
                                             </S.AbsoluteImg>
@@ -177,12 +201,12 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ profile }) => {
                                 <Button variant="light" onClick={() => handleSave(false)}>Salvar</Button>
                             </S.EditingDiv>
                         ) : (<>
-                            <S.AbsoluteImg style={{ background: backgroundImage ? `url(${backgroundImage})` : 'rgb(207, 217, 222)' }}>
-                                <label htmlFor="fileInput"><MdAddAPhoto size={28} /></label>
+                            <S.BackgroundImg background={backgroundImage} >
+                                <label htmlFor="fileInput"><MdAddAPhoto size={28} color="#FFFFFF" /></label>
                                 <input id="fileInput" type="file" accept="image/*" onChange={handleBackgroundImageChange} />
-                            </S.AbsoluteImg>
+                            </S.BackgroundImg>
                             <div className="dataProfile">
-                                <img src={profileImage.toString()} alt="Foto de perfil" />
+                                <img src={profileImage !== profileImg ? (typeof profileImage === 'string' ? convertUrl(profileImage) : URL.createObjectURL(profileImage)) : profileImg} alt="Foto de perfil" />
                                 <div>
                                     <h3>{profile?.username}</h3>
                                     <h4>{profile?.arroba}</h4>
@@ -220,11 +244,13 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ profile }) => {
                 )}
                 {pageProfileForm === 5 && (
                     <S.BackgroundSelect>
-                        <S.AbsoluteImg style={{ background: backgroundImage ? `url(${backgroundImage})` : 'rgb(207, 217, 222)' }}>
-                        </S.AbsoluteImg>
+                        <S.BackgroundImg background={backgroundImage} >
+                            <label htmlFor="fileInput"><MdAddAPhoto size={28} /></label>
+                            <input id="fileInput" type="file" accept="image/*" onChange={handleBackgroundImageChange} />
+                        </S.BackgroundImg>
                         <div className="dataProfile">
                             <div>
-                                <img src={profileImage.toString()} alt="Foto de perfil" />
+                                <img src={profileImage !== profileImg ? (typeof profileImage === 'string' ? convertUrl(profileImage) : URL.createObjectURL(profileImage)) : profileImg} alt="Foto de perfil" />
                                 <div>
                                     <h3>{profile?.username}</h3>
                                     <h4>{arroba}</h4>
@@ -237,12 +263,12 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ profile }) => {
                         {(isAltered()) ? (
                             <Button onClick={() => handleSubmit()} variant="light">Salvar</Button>
                         ) : (
-                            <Button onClick={() => dispatch(closeModalEdit())} variant="light">Fechar sem alterar</Button>
+                            <Button onClick={() => dispatch(closeModalEditProfile())} variant="light">Fechar sem alterar</Button>
                         )}
                     </S.BackgroundSelect>
                 )}
             </S.ProfileModal>
-            <div className='overlay' onClick={() => dispatch(closeModalEdit())} />
+            <div className='overlay' onClick={() => dispatch(closeModalEditProfile())} />
         </Modal >
     )
 }
