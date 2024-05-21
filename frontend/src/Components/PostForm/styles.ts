@@ -38,6 +38,7 @@ export const PostForm = styled.form`
         align-items: center;
         border-top: 1px solid rgb(239, 243, 244);
         padding-top: 12px;
+        width: 100%;
 
         img {
             width: 16px;

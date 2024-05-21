@@ -44,6 +44,7 @@ const Tweet: React.FC<Props> = ({ props, modalDisabled }) => {
     const [moreOptionsRetweet, setMoreOptionsRetweet] = useState(false);
     const [modalPostRetweet, setModalPostRetweetIsOpen] = useState(false);
     const [modalEditTweet, setModalEditTweetIsOpen] = useState(false);
+    const [modalMoreInfos, setModalMoreInfosIsOpen] = useState(false);
 
     const renderMedia = () => {
         if (!props.media) {
@@ -135,17 +136,36 @@ const Tweet: React.FC<Props> = ({ props, modalDisabled }) => {
         setModalEditTweetIsOpen(!modalEditTweet);
     }
 
+    const handleOpenMoreInfos = () => {
+        setModalMoreInfosIsOpen(!modalMoreInfos);
+    }
+
     return (
         <S.PostDiv key={props.id}>
-            <div onClick={() => handleUserClick(props.user.id)}>
-                <S.UserInfo>
-                    <img src={props.user.profile_image ? convertUrl(props.user.profile_image) : userIcon} alt="" />
-                    <div>
-                        <h2>{props.user.username}</h2>
-                        <span>@{props.user.username} · {timePost(props.created_at)}</span>
+            <header>
+                <div onClick={() => handleUserClick(props.user.id)}>
+                    <S.UserInfo>
+                        <img src={props.user.profile_image ? convertUrl(props.user.profile_image) : userIcon} alt="" />
+                        <div>
+                            <h2>{props.user.username}</h2>
+                            <span>@{props.user.username} · {timePost(props.created_at)}</span>
+                        </div>
+                    </S.UserInfo>
+                </div>
+                {props.user.id === myUserProfile.id && (
+                    <div className='retweet-div'>
+                        {modalMoreInfos && (
+                            <div className='options-div'>
+                                <Button onClick={() => handleOpenTweetEditModal()} variant='light'>Editar</Button>
+                                <Button onClick={() => handleOpenRetweetListModal()} variant='light'>Excluir</Button>
+                            </div>
+                        )}
+                        <button className='more-options-btn'>
+                            <span onClick={() => handleOpenMoreInfos()}>...</span>
+                        </button>
                     </div>
-                </S.UserInfo>
-            </div>
+                )}
+            </header>
             <S.PostContent>{props.content}</S.PostContent>
             <S.ImageDiv>
                 {renderMedia()}
