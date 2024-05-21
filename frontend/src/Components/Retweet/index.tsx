@@ -19,6 +19,8 @@ import LikedByList from '../LikedByList';
 import PostDetails from '../Postdetails';
 import MinimizedTweet from '../MinimizedTweet';
 import { ImageDiv } from '../Tweet/styles';
+import Button from '../Button';
+import PostEditForm from '../PostEditForm';
 
 type Props = {
     props: RetweetProps;
@@ -36,6 +38,8 @@ const Retweet: React.FC<Props> = ({ props, modalDisabled }) => {
     const [likeCount, setLikeCount] = useState(props.likes.count)
     const [modalLikeIsOpen, setModalLikeIsOpen] = useState(false);
     const [modalPostIsOpen, setModalPostIsOpen] = useState(false);
+    const [modalEditRetweet, setModalEditRetweetIsOpen] = useState(false);
+    const [modalMoreInfos, setModalMoreInfosIsOpen] = useState(false);
 
     const renderMedia = () => {
         if (!props.media) {
@@ -110,6 +114,13 @@ const Retweet: React.FC<Props> = ({ props, modalDisabled }) => {
         setModalPostIsOpen(!modalPostIsOpen);
     };
 
+    const handleOpenMoreInfos = () => {
+        setModalMoreInfosIsOpen(!modalMoreInfos);
+    }
+    const handleOpenRetweetEditModal = () => {
+        setModalEditRetweetIsOpen(!modalEditRetweet);
+    }
+
     useEffect(() => {
         if (isSuccess) {
             if (liked === true) {
@@ -124,13 +135,28 @@ const Retweet: React.FC<Props> = ({ props, modalDisabled }) => {
 
     return (
         <S.PostDiv key={props.id}>
-            <div onClick={() => handleUserClick(props.user.id)}>
-                <S.UserInfo>
-                    <img src={props.user.profile_image ? convertUrl(props.user.profile_image) : userIcon} alt="" />
-                    <h2>{props.user.username}</h2>
-                    <span>@{props.user.username} · {timePost(props.created_at)}</span>
-                </S.UserInfo>
-            </div>
+            <header>
+                <div onClick={() => handleUserClick(props.user.id)}>
+                    <S.UserInfo>
+                        <img src={props.user.profile_image ? convertUrl(props.user.profile_image) : userIcon} alt="" />
+                        <h2>{props.user.username}</h2>
+                        <span>@{props.user.username} · {timePost(props.created_at)}</span>
+                    </S.UserInfo>
+                </div>
+                {props.user.id === myUserProfile.id && (
+                    <div className='retweet-div'>
+                        {modalMoreInfos && (
+                            <div className='options-div'>
+                                <Button onClick={() => handleOpenRetweetEditModal()} variant='light'>Editar</Button>
+                                <Button onClick={() => handleOpenRetweetEditModal()} variant='light'>Excluir</Button>
+                            </div>
+                        )}
+                        <button className='more-options-btn'>
+                            <span onClick={() => handleOpenMoreInfos()}>...</span>
+                        </button>
+                    </div>
+                )}
+            </header>
             <S.PostContent>{props.content}</S.PostContent>
             <ImageDiv>{renderMedia()}</ImageDiv>
             {data && (
@@ -166,6 +192,9 @@ const Retweet: React.FC<Props> = ({ props, modalDisabled }) => {
                     <PostDetails onClose={handleOpenPostModal} post={props} />
                     <div className='overlay' onClick={() => handleOpenPostModal()} />
                 </Modal>
+            }
+            {modalEditRetweet &&
+                <PostEditForm onClose={handleOpenRetweetEditModal} post={props} />
             }
         </S.PostDiv >
     );

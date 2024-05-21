@@ -215,7 +215,6 @@ const api = createApi({
                 method: 'PATCH',
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json',
                 },
                 body
             }),

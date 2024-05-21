@@ -28,11 +28,11 @@ const Profile = () => {
 
     const { data: user, isLoading: UserLoading, error: UserError } = useGetUserByIdQuery(Number(id));
     const followersUser = (user && Array.isArray(user.followers))
-        ? user.followers.map(u => ({ id: Number(u.id), username: u.username }))
+        ? user.followers.map(u => ({ id: Number(u.id), username: u.username, profile_image: u.profile_image }))
         : [];
 
     const followingsUser = (user && Array.isArray(user.following))
-        ? user.following.map(u => ({ id: Number(u.id), username: u.username }))
+        ? user.following.map(u => ({ id: Number(u.id), username: u.username, profile_image: u.profile_image }))
         : [];
     const { data: userPosts, isLoading: PostsLoading, error: PostsError } = useGetPostUserIdQuery({ id: Number(id), accessToken });
     const { data: myProfile } = useGetMyuserQuery(accessToken);
@@ -83,7 +83,7 @@ const Profile = () => {
         dispatch(openModalEditProfile())
     }
 
-    console.log(user)
+    console.log(userPosts)
     return (
         <S.Profile>
             <div>

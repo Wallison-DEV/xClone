@@ -4,12 +4,13 @@ import userIcon from '../../assets/img/profile_avatar.png';
 import Button from '../Button';
 import { useState } from 'react';
 import { PostForm, PreviewImage } from '../PostForm/styles';
-import { useUpdateTweetMutation } from '../../Services/api';
+import { useGetPostByIdQuery, useUpdateRetweetMutation, useUpdateTweetMutation } from '../../Services/api';
 import { Modal } from '../../styles';
 import { LoginDiv } from '../Login/styles';
+import MinimizedTweet from "../MinimizedTweet";
 
 interface PostEditProps {
-    post: PostProps;
+    post: PostProps | RetweetProps;
     onClose?: () => void;
 }
 
@@ -17,14 +18,21 @@ const PostEditForm: React.FC<PostEditProps> = ({ post, onClose }) => {
     const accessToken = localStorage.getItem("accessToken") || ''
     const [textPostValue, setTextPostValue] = useState(post.content)
 
-    const [EditPurchase] = useUpdateTweetMutation()
+    const [EditTweetPurchase] = useUpdateTweetMutation()
+    const [EditRetweetPurchase] = useUpdateRetweetMutation()
+    let data: any;
 
-    const DoEdit = async () => {
+    if ('tweet_id' in post) {
+        const queryResult = useGetPostByIdQuery(post.tweet_id);
+        data = queryResult.data;
+    }
+
+    const DoEditTweet = async () => {
         try {
             const formData = new FormData();
             formData.append('content', textPostValue);
             formData.append('tweet_id', String(post.id));
-            const response = await EditPurchase({
+            const response = await EditTweetPurchase({
                 body: formData,
                 accessToken
             });
@@ -33,12 +41,33 @@ const PostEditForm: React.FC<PostEditProps> = ({ post, onClose }) => {
                 close()
             }
         } catch (error: any) {
-            console.error('Error making posts:', error);
+            console.error('Error editing tweet:', error);
+        }
+    }
+    const DoEditRetweet = async () => {
+        try {
+            const formData = new FormData();
+            formData.append('content', textPostValue);
+            formData.append('retweet_id', String(post.id));
+            const response = await EditRetweetPurchase({
+                body: formData,
+                accessToken
+            });
+            console.log(response)
+            if (response) {
+                close()
+            }
+        } catch (error: any) {
+            console.error('Error editing retweet:', error);
         }
     }
     const handleSubmit = async (event: { preventDefault: () => void; }) => {
         event.preventDefault();
-        await DoEdit();
+        if ('tweet_id' in post) {
+            await DoEditRetweet();
+        } else {
+            await DoEditTweet();
+        }
     };
 
     const close = () => {
@@ -69,6 +98,9 @@ const PostEditForm: React.FC<PostEditProps> = ({ post, onClose }) => {
                                 )
                             )
                         }
+                        {('tweet_id' in post) && (
+                            <MinimizedTweet {...data} />
+                        )}
                         <footer>
                             <p></p>
                             <Button variant="lightblue" >Editar</Button>

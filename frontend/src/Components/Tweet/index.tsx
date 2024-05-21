@@ -224,10 +224,7 @@ const Tweet: React.FC<Props> = ({ props, modalDisabled }) => {
                 </Modal>
             }
             {modalEditTweet &&
-                <Modal>
-                    <PostEditForm onClose={handleOpenTweetEditModal} post={props} />
-                    <div className='overlay' onClick={() => handleOpenTweetEditModal()} />
-                </Modal>
+                <PostEditForm onClose={handleOpenTweetEditModal} post={props} />
             }
         </S.PostDiv>
     );
