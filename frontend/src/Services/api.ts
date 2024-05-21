@@ -189,6 +189,24 @@ const api = createApi({
         getPostById: builder.query<(PostProps), number>({
             query: (id) => `posts/${id}/`, 
         }),
+        deleteTweetById: builder.mutation({
+            query: ({ id, accessToken }) => ({
+                url: `posts/${id}/`,
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                },
+            }),
+        }),
+        deleteRetweetById: builder.mutation({
+            query: ({ id, accessToken }) => ({
+                url: `retweet/${id}/`,
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                },
+            }),
+        }),
         updateProfile : builder.mutation({
             query: ({ body, accessToken }) => ({
                 url: `update-profile/`,
@@ -243,6 +261,8 @@ export const {
     useUpdateProfileMutation,
     useUpdateTweetMutation,
     useUpdateRetweetMutation,
+    useDeleteTweetByIdMutation,
+    useDeleteRetweetByIdMutation,
 } = api;
 
 export default api;
