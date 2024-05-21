@@ -151,7 +151,6 @@ export const PostDiv = styled.div`
             cursor: pointer;
         }
     }
-
 `
 
 export const ImageDiv = styled.div`

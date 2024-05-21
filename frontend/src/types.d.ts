@@ -64,8 +64,8 @@ declare type UserProfile = {
     arroba: string;
     email: string;
     bio: string;
-    followers: { id: string; username: string }[];
-    following: { id: string; username: string }[];
+    followers: User[];
+    following: User[];
     profile_image: string | null;
     background_image: string | null;
     created_at: string;

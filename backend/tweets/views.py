@@ -133,7 +133,6 @@ class RetweetViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        print("Dados recebidos:", request.data)
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.validated_data['user'] = request.user
