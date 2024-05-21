@@ -201,18 +201,17 @@ const api = createApi({
         }),
         updateTweet : builder.mutation({
             query: ({ body, accessToken }) => ({
-                url: `post/update-tweet/`,
+                url: `update-tweet/`,
                 method: 'PATCH',
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json',
                 },
                 body
             }),
         }),
         updateRetweet : builder.mutation({
             query: ({ body, accessToken }) => ({
-                url: `retweet/update-retweet/`,
+                url: `update-retweet/`,
                 method: 'PATCH',
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,

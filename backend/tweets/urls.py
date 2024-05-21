@@ -18,6 +18,6 @@ urlpatterns = [
     path('create-retweet/', RetweetViewSet.as_view({'post': 'create'}), name='create-retweet'),
     path('post/<int:pk>/add-like/', PostViewSet.as_view({'post': 'add_like'}), name='post-add-like'),
     path('retweet/<int:pk>/add-like/', RetweetViewSet.as_view({'post': 'add_like'}), name='post-add-like'),
-    path('post/update-tweet/', PostViewSet.as_view({'patch': 'update_tweet'}), name='update-tweet'),
-    path('retweet/update-retweet/', RetweetViewSet.as_view({'patch': 'update_retweet'}), name='update-retweet'),
+    path('update-tweet/', PostViewSet.as_view({'patch': 'update_tweet'}), name='update-tweet'),
+    path('update-retweet/', RetweetViewSet.as_view({'patch': 'update_retweet'}), name='update-retweet'),
 ]

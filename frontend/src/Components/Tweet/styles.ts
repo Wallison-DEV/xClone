@@ -87,6 +87,15 @@ export const PostDetails = styled.div`
         margin-left: 4px;
         height: 14px;
     }
+`
+
+export const PostDiv = styled.div`
+    width: 100%;
+    border: 1px solid #f0f0f0;
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 16px;
+    font-size: 16px;
 
     .retweet-div {
         position: relative;
@@ -105,8 +114,8 @@ export const PostDetails = styled.div`
 
         .options-div{
             position: absolute;
-            bottom: 140%;
-            right: -60px;
+            bottom: 24px;
+            right: 0;
             background: #fff;
             border-radius: 12px;
             box-shadow: 2px 4px 4px 2px rgba(0, 0, 0, 0.2);
@@ -114,6 +123,8 @@ export const PostDetails = styled.div`
 
         ${ButtonStyle}{
             padding: 12px 0;
+            background: #fff;
+            z-index: 1;
             border: none;
             width: 148px;
         }
@@ -124,15 +135,23 @@ export const PostDetails = styled.div`
             border-radius: 12px 12px 0 0 ;
         }
     }
-`
 
-export const PostDiv = styled.div`
-    width: 100%;
-    border: 1px solid #f0f0f0;
-    border-radius: 8px;
-    padding: 16px;
-    margin-top: 16px;
-    font-size: 16px;
+    header {
+        position: relative;
+        .retweet-div{
+            .options-div {
+                bottom: 36px; 
+                right: 12px;
+            }
+        }
+        .more-options-btn {
+            position: absolute; 
+            right: 12px;
+            bottom: 16px;
+            cursor: pointer;
+        }
+    }
+
 `
 
 export const ImageDiv = styled.div`
