@@ -8,6 +8,8 @@ from rest_framework_simplejwt.tokens import UntypedToken, AccessToken
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from django.utils import timezone
+from rest_framework.parsers import JSONParser, MultiPartParser
+from django.db.models import Q
 
 from .models import AccountModel
 
@@ -18,12 +20,13 @@ class AccountModelViewSet(viewsets.ModelViewSet):
     queryset = AccountModel.objects.all().order_by('username')
     serializer_class = UserSerializer
     lookup_field = 'pk'
+    parser_classes = (JSONParser, MultiPartParser)
     
     def list(self, request, *args, **kwargs):
         username_query = request.query_params.get('username', '')
         if username_query:
             filtered_user = AccountModel.objects.filter(
-                models.Q(username__icontains=username_query) | models.Q(arroba__icontains=username_query)
+                Q(username__icontains=username_query) | Q(arroba__icontains=username_query)
             )
         else:
             filtered_user = self.get_queryset()

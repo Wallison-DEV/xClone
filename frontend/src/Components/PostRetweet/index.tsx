@@ -5,13 +5,14 @@ import { StyledHeader } from "../PostList/styles"
 import { PostForm, PreviewImage } from '../PostForm/styles'
 import { LoginDiv } from "../Login/styles"
 
-import { useDoRepostMutation } from "../../Services/api";
+import { useDoRepostMutation, useGetMyuserQuery } from "../../Services/api";
 
-import userImg from '../../assets/img/user.png';
+import userIcon from '../../assets/img/profile_avatar.png';
 import pictureIcon from '../../assets/icons/pictureIcon.png'
 
 import Button from "../Button";
 import MinimizedTweet from "../MinimizedTweet";
+import { convertUrl } from "../../Utils";
 
 interface PostRetweetProps {
     post: PostProps;
@@ -19,6 +20,8 @@ interface PostRetweetProps {
 }
 
 const PostRetweet: React.FC<PostRetweetProps> = ({ post, onClose }) => {
+    const accessToken = localStorage.getItem('accessToken') || ''
+    const { data: myProfile } = useGetMyuserQuery(accessToken)
     const [doRepost, { isError, error, isSuccess }] = useDoRepostMutation();
     const [textRepostValue, setTextRepostValue] = useState('')
     const [sourceRepostValue, setSourceRepostValue] = useState<File | null>(null)
@@ -73,7 +76,7 @@ const PostRetweet: React.FC<PostRetweetProps> = ({ post, onClose }) => {
                     </StyledHeader>
                 }
                 <PostForm onSubmit={handleSubmit}>
-                    <img src={userImg} alt="" />
+                    <img src={myProfile?.profile_image ? convertUrl(myProfile?.profile_image) : userIcon} alt="" />
                     <div>
                         <textarea placeholder='O que está acontecendo?' value={textRepostValue} onChange={(e) => setTextRepostValue(e.target.value)} />
                         {sourceRepostValue && (

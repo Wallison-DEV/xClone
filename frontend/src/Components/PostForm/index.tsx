@@ -1,16 +1,18 @@
 import { useState } from 'react';
 
-import { useDoPostMutation } from '../../Services/api'
+import { useDoPostMutation, useGetMyuserQuery } from '../../Services/api'
+import { convertUrl } from "../../Utils";
 
 import * as S from './styles'
 
 import Button from "../Button";
 
-import userImg from '../../assets/img/user.png'
+import userIcon from '../../assets/img/profile_avatar.png'
 import pictureIcon from '../../assets/icons/pictureIcon.png'
 
 const PostForm = ({ isNotModal }: { isNotModal?: boolean }) => {
-    const accessToken = localStorage.getItem("accessToken") || ''
+    const accessToken = localStorage.getItem('accessToken') || ''
+    const { data: myProfile } = useGetMyuserQuery(accessToken)
     const [textPostValue, setTextPostValue] = useState('')
     const [sourcePostValue, setSourcePostValue] = useState<File | null>(null)
     const [postMedia] = useDoPostMutation()
@@ -46,7 +48,7 @@ const PostForm = ({ isNotModal }: { isNotModal?: boolean }) => {
     return (
         <S.PostDiv style={{ zIndex: !isNotModal ? '100' : '' }}>
             <S.PostForm onSubmit={handleSubmit}>
-                <img src={userImg} alt="" />
+                <img src={myProfile?.profile_image ? convertUrl(myProfile?.profile_image) : userIcon} alt="" />
                 <div>
                     <textarea placeholder='O que está acontecendo?' value={textPostValue} onChange={(e) => setTextPostValue(e.target.value)} />
                     {

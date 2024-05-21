@@ -21,6 +21,7 @@ export const UserInfo = styled.div`
     img {
         width: 24px;
         margin-right: 8px;
+        border-radius: 50%;
     }
 
     >div{

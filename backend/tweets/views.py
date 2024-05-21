@@ -51,6 +51,23 @@ class PostViewSet(viewsets.ModelViewSet):
             serializer.save(user=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    @action(detail=False, methods=['patch'], permission_classes=[IsAuthenticated])
+    def update_tweet(self, request):
+        tweet_id = request.data.get('tweet_id')
+        try:
+            tweet = PostModel.objects.get(pk=tweet_id)
+            if request.user == tweet.user:
+                serializer = self.get_serializer(tweet, data=request.data, partial=True)
+                if serializer.is_valid(raise_exception=True):
+                    serializer.save()
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+                else:
+                    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({"detail": "Você não tem permissão para modificar este tweet."}, status=status.HTTP_403_FORBIDDEN)
+        except PostModel.DoesNotExist:
+            return Response({"detail": "Tweet não encontrado."}, status=status.HTTP_404_NOT_FOUND)
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -123,11 +140,23 @@ class RetweetViewSet(viewsets.ModelViewSet):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        return Response(serializer.data)
+    
+    @action(detail=False, methods=['patch'], permission_classes=[IsAuthenticated])
+    def update_retweet(self, request):
+        retweet_id = request.data.get('retweet_id')
+        try:
+            retweet = RetweetModel.objects.get(pk=retweet_id)
+            if request.user == retweet.user:
+                serializer = self.get_serializer(retweet, data=request.data, partial=True)
+                if serializer.is_valid(raise_exception=True):
+                    serializer.save()
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+                else:
+                    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({"detail": "Você não tem permissão para modificar este retweet."}, status=status.HTTP_403_FORBIDDEN)
+        except RetweetModel.DoesNotExist:
+            return Response({"detail": "Retweet não encontrado."}, status=status.HTTP_404_NOT_FOUND)
 
     @action(detail=False, methods=['get'])
     def all_other_users_retweets(self, request):

@@ -3,9 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { PostContent, UserInfo } from "../Tweet/styles"
 import { PostDiv } from "../Tweet/styles"
 
-import { timePost } from '../../Utils'
+import { convertUrl, timePost } from '../../Utils'
 
-import userImg from '../../assets/img/user.png';
+import userIcon from '../../assets/img/profile_avatar.png';
 
 const MinimizedTweet = (props: PostProps) => {
     const navigate = useNavigate()
@@ -21,7 +21,7 @@ const MinimizedTweet = (props: PostProps) => {
         <PostDiv>
             <div onClick={() => handleUserClick(props.user.id)}>
                 <UserInfo>
-                    <img src={userImg} alt="" />
+                    <img src={props.user.profile_image ? convertUrl(props.user.profile_image) : userIcon} alt="" />
                     <h2>{props.user.username}</h2>
                     <span>@{props.user.username} · {timePost(props.created_at)}</span>
                 </UserInfo>

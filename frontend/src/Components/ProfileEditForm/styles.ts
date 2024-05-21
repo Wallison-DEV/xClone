@@ -1,7 +1,13 @@
 import styled from "styled-components";
+
 import { InputDiv, LoginDiv } from "../Login/styles";
 import { SecondTitle } from "../../styles";
 import { ButtonStyle } from "../Button/styles";
+import { convertUrl } from "../../Utils";
+
+interface BackgroundImgProps {
+    background?: string | File | null; 
+}
 
 export const ProfileModal = styled(LoginDiv)`
     padding: 32px;
@@ -16,6 +22,7 @@ export const ProfileModal = styled(LoginDiv)`
     div{
         display: flex;
         flex-direction: column;
+        gap: auto;
         width: 100%;
         align-items: center;
     }
@@ -26,13 +33,51 @@ export const ProfileModal = styled(LoginDiv)`
         width: calc(100% - 64px);
     }
 `
+export const BackgroundImg = styled.div<BackgroundImgProps>`
+    position: relative;
+    padding: 12px;
+    margin-top: 24px;
+    ${(props) => props.background &&
+        `background: url(${typeof props.background === 'string' ? convertUrl(props.background) : URL.createObjectURL(props.background)});
+    `}    
+    ${(props) => !props.background &&
+        `background-color: rgb(207, 217, 222);`
+    }
+    background-size: cover;
+    
+    img{
+        height: 200px;
+        width: 200px;
+    }
+
+    input {
+        display: none;
+    }
+
+    label {
+        z-index: 1;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background : rgba( 1, 1, 1 , 0.3);
+        border-radius: 50%;
+        height: 44px;
+        width: 44px;
+        cursor: pointer;
+    }
+`
 export const AbsoluteImg = styled.div`
     position: relative;
     padding: 12px;
-
-    img {
+    
+    img{
         height: 200px;
         width: 200px;
+        border-radius: 50%;
     }
 
     input {
@@ -63,18 +108,22 @@ export const EditingDiv = styled.div`
 `
 
 export const BackgroundSelect = styled.div`
-    ${AbsoluteImg}{
+    ${BackgroundImg}{
         height: 168px;
         margin-top: 24px;
     }
     .dataProfile {
         display: flex;
         flex-direction: row;
+        padding-top: 16px;
         padding-bottom: 24px;
         div{
             align-items: start;
             padding-left: 12px;
             padding-top: 24px;
+        }
+        img {
+            border-radius: 50%;
         }
         p{
             font-size: 1rem;

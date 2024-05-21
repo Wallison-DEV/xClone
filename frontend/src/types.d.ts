@@ -44,6 +44,7 @@ declare interface RetweetProps {
 declare interface User {
     id: number;
     username: string;
+    profile_image: string | null;
 }
 
 declare interface Comment {

@@ -3,11 +3,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
 import { RootReducer } from '../../Store';
-import { openModalEdit, openModalFollow } from '../../Store/reducers/profile';
+import { openModalEditProfile, openModalFollow } from '../../Store/reducers/profile';
 import { useGetUserByIdQuery, useGetPostUserIdQuery, useFollowMutation, useUnfollowMutation, useGetMyuserQuery } from '../../Services/api';
-import { unfollowProfile, followProfile } from '../../Utils';
+import { unfollowProfile, followProfile, convertUrl } from '../../Utils';
 
 import * as S from './styles';
+import { PostContainer } from '../../Components/PostList/styles';
 
 import profileImg from '../../assets/img/profile_avatar.png';
 
@@ -15,8 +16,7 @@ import Button from '../../Components/Button';
 import FollowList from '../../Components/FollowList';
 import Retweet from '../../Components/Retweet';
 import Tweet from '../../Components/Tweet';
-import { PostContainer } from '../../Components/PostList/styles';
-import ProfileForm from '../../Components/ProfileForm';
+import ProfileForm from '../../Components/ProfileEditForm';
 
 const Profile = () => {
     const { id } = useParams();
@@ -80,14 +80,19 @@ const Profile = () => {
         dispatch(openModalFollow())
     }
     const openEdit = () => {
-        dispatch(openModalEdit())
+        dispatch(openModalEditProfile())
     }
 
+    console.log(user)
     return (
         <S.Profile>
             <div>
-                <S.ProfilePicture style={{ background: myProfile?.background_image ? `url(${myProfile?.background_image})` : 'rgb(207, 217, 222)' }}>
-                    <img src={myProfile?.profile_image ? myProfile?.profile_image : profileImg} alt="Foto de perfil" />
+                <S.ProfilePicture style={{
+                    backgroundSize: 'cover',
+                    backgroundImage: user?.background_image ? `url(${convertUrl(user.background_image)})` : 'none',
+                    backgroundColor: user?.background_image ? 'transparent' : 'rgb(207, 217, 222)'
+                }}>
+                    <img src={user?.profile_image ? convertUrl(user?.profile_image) : profileImg} alt="Foto de perfil" />
                     <S.HeaderButton>
                         {myProfile?.id === Number(id) ? (
                             <button onClick={openEdit} className="configureButton"></button>

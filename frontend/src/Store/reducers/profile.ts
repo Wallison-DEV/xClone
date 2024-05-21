@@ -38,14 +38,14 @@ const profileSlice = createSlice({
         closeModalFollow(state) {
             state.modalFollowOpen = false;
         },
-        openModalEdit(state){
+        openModalEditProfile(state){
             state.modalEditProfileOpen = true;
         },
-        closeModalEdit(state) {
+        closeModalEditProfile(state) {
             state.modalEditProfileOpen = false;
         },
     }
 })
-export const { updateFollowedProfiles, clearFollowed, openModalFollow, closeModalFollow, updateMyUser, closeModalEdit, openModalEdit } = profileSlice.actions;
+export const { updateFollowedProfiles, clearFollowed, openModalFollow, closeModalFollow, updateMyUser, closeModalEditProfile, openModalEditProfile } = profileSlice.actions;
 
 export default profileSlice.reducer;

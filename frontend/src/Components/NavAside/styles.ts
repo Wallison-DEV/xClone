@@ -139,6 +139,7 @@ export const MyProfile = styled.button`
             width: 40px;
             height: 40px;
             margin-right: 12px;
+            border-radius: 50%;
         }
     }
 

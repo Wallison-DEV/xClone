@@ -4,16 +4,17 @@ import { useDispatch } from "react-redux";
 import * as S from './styles'
 import { Modal } from "../../styles";
 
-import userIcon from "../../assets/img/user.png"
+import userIcon from "../../assets/img/profile_avatar.png"
 import { IoHomeOutline, IoPersonOutline, IoSearch } from "react-icons/io5";
 import { FaPenFancy } from "react-icons/fa6";
 
 import { useGetMyuserQuery } from "../../Services/api";
 import { clearFollowed, updateMyUser } from "../../Store/reducers/profile";
-import PostForm from "../PostForm";
-
-import Button from '../Button'
 import { falseValidate } from "../../Store/reducers/entry";
+
+import PostForm from "../PostForm";
+import Button from '../Button'
+import { convertUrl } from "../../Utils";
 
 const NavAside = () => {
     const accessToken = localStorage.getItem('accessToken') || ''
@@ -93,7 +94,7 @@ const NavAside = () => {
                             )}
                             <S.MyProfile onClick={() => setIsMenuOpen(!isMenuOpen)}>
                                 <div>
-                                    <img src={userIcon} alt="" />
+                                    <img src={myProfile?.profile_image ? convertUrl(myProfile.profile_image) : userIcon} alt="" />
                                     <div className="userInfos">
                                         <p>{myProfile?.username || "Nome de Usuário"}</p>
                                         <span>{myProfile?.arroba || "Nome de Usuário"}</span>
