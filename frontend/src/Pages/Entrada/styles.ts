@@ -58,7 +58,6 @@ export const Separador = styled.div`
     display: flex;
     align-items: center;
     text-align: center;
-    color: ${Colors.black};
     margin: 16px 0;
     width: 298px;
 
@@ -83,7 +82,7 @@ export const PrivacyPolicy = styled.div`
     font-weight: 400;
     text-decoration: none;
     max-width: 300px;
-    color: ${Colors.gray};
+    color: ${(props)=> props.theme.corDoTextoSecundario};
     margin: 12px 0 48px;
 
     span {

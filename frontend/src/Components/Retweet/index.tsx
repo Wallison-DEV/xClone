@@ -127,10 +127,10 @@ const Retweet: React.FC<Props> = ({ props, modalDisabled }) => {
         try {
             await deleteRetweetPurchase({ id: props.id, accessToken });
             if (deleteIsSuccess) {
-                alert('Tweet deletado com sucesso!');
+                alert('Retweet deletado com sucesso!');
             }
         } catch (error) {
-            console.error('Failed to like post:', error);
+            console.error('Failed to delete retweet:', error);
         }
     }
 

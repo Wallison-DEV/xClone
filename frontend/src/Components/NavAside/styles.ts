@@ -1,7 +1,31 @@
 import styled from "styled-components";
-import { Colors, breakpoints } from "../../styles";
+import {breakpoints } from "../../styles";
 import { ButtonStyle } from "../Button/styles";
 import { NavLink } from 'react-router-dom';
+
+export const ThemeToggleButton = styled.button`
+    background: none;
+    padding: 0 16px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: ${(props) => props.theme.corDoTextoSecundario};
+    transition: color 0.3s;
+
+    &:hover {
+        color: ${(props) => props.theme.corPrincipal};
+    }
+`;
+
+export const TemaIcone = styled.span<{ isDarkTheme: boolean }>`
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+    transition: transform 0.3s; 
+    transform: rotate(${(props) => (props.isDarkTheme ? '0deg' : '180deg')});
+`;
 
 export const ItemAside = styled(NavLink)`
     display: flex;
@@ -15,11 +39,11 @@ export const ItemAside = styled(NavLink)`
     font-weight: bold;
 
     &:hover {
-        background-color: #eee;
+        background-color: ${(props)=> props.theme.corDoHover};
     }
 
     &.active {
-        background-color: ${Colors.lightgray};
+        background-color: ${(props)=> props.theme.corDoHover};
     }
 `
 
@@ -53,9 +77,15 @@ export const LeftAside = styled.aside`
     .post-icon{
         display: none;
     }
+    ${ButtonStyle}{
+        p{
+            color: #fff;
+        }
+    }
 
     @media( max-width: ${breakpoints.desktop}){
         width: 78px;
+
         .userInfos, p{
             display: none;
         }
@@ -71,26 +101,31 @@ export const LeftAside = styled.aside`
     }
     @media( max-width: ${breakpoints.tablet}){
         position: fixed;
-        padding: 8px;
+        display: flex;
+        align-items: center;
+        padding-top: 8px;
         top: auto;
         bottom: 0;
         left: 0;
         height: 58px;
         width: 100%;
         z-index: 1000;
-        box-shadow: 8px 0 0  rgba(0, 0, 0, 0.4);
+        box-shadow: ${(props)=> props.theme.boxShadow};
         border: none;
-        background: #fff;
+
         >div{
             height: auto;
+            width: 100%;
             >div{
                 width: 100%;
                 position: relative;
                 height: auto;
                 display: flex;
+                align-items: center;
                 flex-direction: row;
                 justify-content: space-around;
-                gap: 12px;
+                gap-column: 12px;
+                margin-bottom: 8px;
             }
         }
 
@@ -106,7 +141,12 @@ export const ProfileDiv = styled.div`
     position: relative;
 
     @media(max-width: ${breakpoints.desktop}){
-        margin-bottom: 0;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        button{
+            margin: 0;
+        }
     }
 `
 
@@ -132,7 +172,7 @@ export const MyProfile = styled.button`
 
         span {
             font-weight: 400;
-            color: ${Colors.gray};
+            color: ${(props)=> props.theme.corDoTextoSecundario};
         }
 
         img{
@@ -149,14 +189,14 @@ export const MyProfile = styled.button`
     }
 
     &:hover{
-        background-color: ${Colors.lightgray};
+        background-color: ${(props)=> props.theme.corDoHover};
     }
 
     @media (max-width: ${breakpoints.desktop}){
         padding: 4px;
         >div img {
-            height: 32px;
-            width: 32px;
+            width: 40px;
+            height: 40px;
             margin: 0;
         }
 

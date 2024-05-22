@@ -33,7 +33,7 @@ export const Profile = styled.div`
 
         span {
             font-weight: 400;
-            color: ${Colors.gray};
+            color: ${(props)=> props.theme.corDoTextoSecundario};
         }
 
         img{

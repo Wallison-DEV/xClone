@@ -1,6 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux'
 
-import XLogo from '../../assets/img/twitter-logo.png'
 import googleLogo from '../../assets/icons/google.png'
 import appleLogo from '../../assets/icons/apple-logo.png'
 
@@ -12,9 +11,11 @@ import { openLogin, openRegister } from '../../Store/reducers/entry'
 import { RootReducer } from '../../Store'
 import Login from '../../Components/Login'
 import Cadastro from '../../Components/Cadastro'
+import { useTheme } from 'styled-components'
 
 const Entrada = () => {
     const dispatch = useDispatch()
+    const theme = useTheme()
     const { loginOpen, registerOpen } = useSelector((state: RootReducer) => state.entry);
 
     const logOpen = () => {
@@ -31,7 +32,7 @@ const Entrada = () => {
         <div>
             <div className='container'>
                 <S.EntryDiv>
-                    <div className='flex-end'><img className="logoImg" src={XLogo} alt="" /></div>
+                    <div className='flex-end'><img className="logoImg" src={theme.xLogo} alt="" /></div>
                     <div className="loginDiv">
                         <S.ListDiv>
                             <G.PrimaryTitle className='margin-24'>Acontecendo agora</G.PrimaryTitle>

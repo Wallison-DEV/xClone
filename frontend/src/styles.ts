@@ -23,7 +23,7 @@ export const EstiloGlobal = createGlobalStyle`
         font-family: 'Inter', sans-serif;
         list-style: none;
         text-decoration: none;
-        color: ${Colors.lightBlack};
+        color: ${(props)=> props.theme.corDoTexto};
         &::-webkit-scrollbar {
             width: 8px; 
         }
@@ -40,6 +40,10 @@ export const EstiloGlobal = createGlobalStyle`
         &::-webkit-scrollbar-thumb:hover {
             background: ${Colors.gray}; 
         }
+    }
+
+    body {
+        background: ${(props)=> props.theme.corDeFundo};
     }
 
     .container { 

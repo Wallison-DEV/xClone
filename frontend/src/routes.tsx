@@ -16,7 +16,12 @@ import Post from './Pages/Post';
 import { RootReducer } from './Store';
 import { falseValidate, trueValidate } from './Store/reducers/entry';
 
-const Rotas = () => {
+type RotasProps = {
+    togleTheme: () => void;
+    isDarkTheme: boolean;
+}
+
+const Rotas = ({ togleTheme, isDarkTheme }: RotasProps) => {
     const isAuthenticated = useSelector((state: RootReducer) => state.entry.isValidate);
     const dispatch = useDispatch();
 
@@ -56,7 +61,7 @@ const Rotas = () => {
         <>
             {isAuthenticated && (
                 <Container>
-                    <NavAside />
+                    <NavAside isDarkTheme={isDarkTheme} togleTheme={togleTheme} />
                     < >
                         <Routes>
                             <Route path="/home" element={<Home />} />

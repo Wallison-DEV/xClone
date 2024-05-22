@@ -3,7 +3,7 @@ import { Colors } from "../../styles";
 
 export const LoginDiv = styled.div`
     z-index: 1;
-    background-color: ${Colors.white};
+    background-color: ${(props)=> props.theme.corDeFundo};
     max-width: 600px;
     width: 100%;
     height: auto;
@@ -18,7 +18,7 @@ export const InputDiv = styled.div`
     position: relative;
     width: 100%;
     margin-bottom: 20px; 
-    border: 1px solid ${Colors.blue};
+    border: 1px solid ${(props)=> props.theme.corDaBorda};
     border-radius: 5px; 
     height: 58px; 
     padding: 8px;
@@ -30,7 +30,7 @@ export const InputDiv = styled.div`
         transform: translateY(-50%);
         font-size: 13px;
         font-weight: 400;
-        color: ${Colors.blue};
+        color: ${(props)=> props.theme.corDaBorda};
     }
     textarea, input {
         outline: none; 
@@ -38,6 +38,8 @@ export const InputDiv = styled.div`
         width: 100%;
         margin-top: 20px;
         font-size: 17px;
+        color: ${(props)=> props.theme.corDoTexto};
+        background-color: ${(props)=> props.theme.corDeFundo};
     } 
 `
 export const StyledForm = styled.form`
