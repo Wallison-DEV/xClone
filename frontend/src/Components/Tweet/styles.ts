@@ -15,7 +15,7 @@ export const UserInfo = styled.div`
     }
 
     span {
-        color: rgb(83, 100, 113);
+        color: ${(props)=> props.theme.corDoTextoSecundario};
     }
 
     img {
@@ -64,28 +64,25 @@ export const PostDetails = styled.div`
         cursor: pointer;
         display: flex;
         align-items: center;
+        gap: 6px;
         button {
             background: none;
             border: none;
             cursor: pointer;
             .like-button {
-                width: 18px;
-                height: 18px;
+                width: 14px;
+                height: 14px;
                 transition: transform 0.2s ease-in-out;
                 transform: scale(1);
             }
             .liked {
                 color: red;
-                width: 18px;
-                height: 18px;
+                width: 16px;
+                height: 16px;
                 transition: transform 0.2s ease-in-out;
                 transform: scale(1.2);
             }
         }
-    }
-    img {
-        margin-left: 4px;
-        height: 14px;
     }
 `
 

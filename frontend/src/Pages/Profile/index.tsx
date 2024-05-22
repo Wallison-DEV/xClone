@@ -8,10 +8,11 @@ import { useGetUserByIdQuery, useGetPostUserIdQuery, useFollowMutation, useUnfol
 import { unfollowProfile, followProfile, convertUrl } from '../../Utils';
 
 import * as S from './styles';
-import { PostContainer } from '../../Components/PostList/styles';
 
 import profileImg from '../../assets/img/profile_avatar.png';
+import { FaGear } from "react-icons/fa6";
 
+import { PostContainer } from '../../Components/PostList/styles';
 import Button from '../../Components/Button';
 import FollowList from '../../Components/FollowList';
 import Retweet from '../../Components/Retweet';
@@ -83,7 +84,6 @@ const Profile = () => {
         dispatch(openModalEditProfile())
     }
 
-    console.log(userPosts)
     return (
         <S.Profile>
             <div>
@@ -95,7 +95,7 @@ const Profile = () => {
                     <img src={user?.profile_image ? convertUrl(user?.profile_image) : profileImg} alt="Foto de perfil" />
                     <S.HeaderButton>
                         {myProfile?.id === Number(id) ? (
-                            <button onClick={openEdit} className="configureButton"></button>
+                            <button onClick={openEdit} className="configureButton"><FaGear size={24} /></button>
                         ) : (
                             <>
                                 {isProfileFollowed(user.id) ? (

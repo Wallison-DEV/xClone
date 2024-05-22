@@ -1,12 +1,12 @@
 import styled from "styled-components";
 import { ButtonStyle } from "../Button/styles";
-import { Colors } from "../../styles";
 
 export const PostForm = styled.form`
     display : grid;
     grid-template-columns: 48px auto;
     width: 100%;
     margin-top: 12px;
+    background: ${(props)=> props.theme.corDeFundo};
 
     label {
         cursor: pointer;
@@ -31,6 +31,7 @@ export const PostForm = styled.form`
         resize: none;
         min-height: 100px;
         height: auto;
+        background-color: ${(props)=> props.theme.corDeFundo};
     }
     footer {
         display: flex;
@@ -55,7 +56,7 @@ export const PreviewImage = styled.img`
 `
 
 export const PostDiv = styled.div`
-    background-color: ${Colors.white};
+    background: ${(props)=> props.theme.corDeFundo};
     max-width: 700px;
     width: 100%;
     height: auto;

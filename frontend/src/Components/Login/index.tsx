@@ -1,3 +1,4 @@
+import { useTheme } from 'styled-components';
 import { useDispatch } from 'react-redux';
 import { useCallback, useState } from 'react';
 
@@ -5,7 +6,6 @@ import { useCallback, useState } from 'react';
 import { calculateTimeUntilExpiration } from '../../Utils';
 import { useDoLoginMutation } from '../../Services/api';
 
-import XLogo from '../../assets/img/twitter-logo.png'
 import googleLogo from '../../assets/icons/google.png'
 import appleLogo from '../../assets/icons/apple-logo.png'
 
@@ -22,6 +22,7 @@ import { Modal, SecondTitle } from '../../styles';
 import { closeModal, openRegister, trueValidate } from '../../Store/reducers/entry';
 
 const Login = () => {
+    const theme = useTheme()
     const [usernameOrEmail, setUsernameOrEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
@@ -64,7 +65,7 @@ const Login = () => {
     return (
         <Modal>
             <S.LoginDiv>
-                <S.FormHeader><span onClick={close}>x</span><img src={XLogo} alt="" /></S.FormHeader>
+                <S.FormHeader><span onClick={close}>x</span><img src={theme.xLogo} alt="" /></S.FormHeader>
                 <S.StyledForm onSubmit={handleSubmit}>
                     {isEmail ? (
                         <ListDiv>

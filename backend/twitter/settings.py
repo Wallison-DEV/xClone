@@ -8,7 +8,7 @@ SECRET_KEY = "django-insecure-mrj*me#@=7)0aj@lh)1*0$9#0s5dud+2iebge=zi-(rhiz17!b
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['wallison.pythonanywhere.com', 'localhost', '127.0.0.1', 'vercel.com/wallisondevs/x-clone-backend/J9nWaRkho1AvWmpce1kvrKA74hwU']
+ALLOWED_HOSTS = ['wallison.pythonanywhere.com', 'localhost', '127.0.0.1', 'x-clone-backend-cyan.vercel.app']
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -50,7 +50,7 @@ AUTH_USER_MODEL = 'accounts.AccountModel'
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
     'https://wallison.pythonanywhere.com',
-    # 'https://vercel.com/wallisondevs/x-clone-backend/J9nWaRkho1AvWmpce1kvrKA74hwU',
+    'https://x-clone-frontend-neon.vercel.app',
 ]
 
 CORS_ALLOW_METHODS = [
@@ -124,7 +124,8 @@ USE_I18N = True
 
 USE_TZ = True
 
-STATIC_URL = "static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATIC_URL = "/static/"
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')

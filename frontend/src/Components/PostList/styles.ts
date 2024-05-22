@@ -21,6 +21,7 @@ export const StyledHeader = styled.header`
     grid-template-columns: 1fr 1fr;
     width: 100%;
     position: relative;
+    margin-bottom: 16px;
 
     .close-span {
         position: absolute;

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from "styled-components";
 
 import { RootReducer } from '../../Store';
 import { convertUrl, timePost } from '../../Utils'
@@ -11,10 +12,10 @@ import * as S from './styles';
 import { Modal } from '../../styles';
 
 import userIcon from '../../assets/img/profile_avatar.png';
-import commentIcon from '../../assets/icons/comment.png';
-import retweetIcon from '../../assets/icons/repost.png';
-import likeIcon from '../../assets/icons/like.png';
 import likedIcon from '../../assets/icons/liked.png';
+
+import { FaRegCommentAlt } from "react-icons/fa";
+import { FaRepeat } from "react-icons/fa6";
 
 import LikedByList from '../LikedByList';
 import PostDetails from '../Postdetails';
@@ -30,6 +31,7 @@ type Props = {
 
 const Tweet: React.FC<Props> = ({ props, modalDisabled }) => {
     const accessToken = localStorage.getItem('accessToken') || ''
+    const theme = useTheme();
     const navigate = useNavigate();
     const myUserProfile = useSelector((state: RootReducer) => state.profile.myUser);
     const [addLike, { isLoading: isAddingLike }] = useAddLikeTweetMutation();
@@ -148,7 +150,7 @@ const Tweet: React.FC<Props> = ({ props, modalDisabled }) => {
                 alert('Tweet deletado com sucesso!');
             }
         } catch (error) {
-            console.error('Failed to like post:', error);
+            console.error('Failed to delete tweet:', error);
         }
     }
 
@@ -189,7 +191,7 @@ const Tweet: React.FC<Props> = ({ props, modalDisabled }) => {
                             {likeCount}
                         </div>
                         <button onClick={() => handleLikeClick(props.id)} disabled={isAddingLike}>
-                            <img src={liked ? likedIcon : likeIcon} className={liked ? 'liked' : 'like-button'} />
+                            <img src={liked ? likedIcon : (theme.likeIcon)} className={liked ? 'liked' : 'like-button'} />
                         </button>
                     </span>
                 </div >
@@ -197,7 +199,7 @@ const Tweet: React.FC<Props> = ({ props, modalDisabled }) => {
                     {props.comments && (
                         <span onClick={() => handleOpenDetailsModal()}>
                             {Array.isArray(props.comments) ? props.comments.length : 0}
-                            <img src={commentIcon} alt="comment" />
+                            <FaRegCommentAlt size={14} />
                         </span>
                     )}
                 </div >
@@ -211,7 +213,7 @@ const Tweet: React.FC<Props> = ({ props, modalDisabled }) => {
                     <button onClick={() => setMoreOptionsRetweet(!moreOptionsRetweet)}>
                         <span >
                             <p>{Array.isArray(props.retweets) ? props.retweets.length : 0}</p>
-                            <img src={retweetIcon} />
+                            <FaRepeat size={14} />
                         </span>
                     </button>
                 </div>
