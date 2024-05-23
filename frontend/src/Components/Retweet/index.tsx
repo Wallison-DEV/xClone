@@ -51,7 +51,7 @@ const Retweet: React.FC<Props> = ({ props, modalDisabled }) => {
         const isLocalMedia = props.media.startsWith('/media/post_media');
 
         if (isLocalMedia) {
-            const mediaUrl = props.media.replace('/media', 'http://localhost:8000/media');
+            const mediaUrl = props.media.replace('/media', 'https://wallison.pythonanywhere.com/media');
 
             const mediaType = mediaUrl.split('.').pop()?.toLowerCase();
 

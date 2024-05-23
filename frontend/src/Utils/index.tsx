@@ -21,7 +21,7 @@ export const calculateTimeUntilExpiration = (expirationTimeInSeconds: number) =>
 //         const refresh = refreshToken;
 //         if (refresh) {
 //             try {
-//                 const response = await fetch('http://localhost:8000/api/token/refresh/', {
+//                 const response = await fetch('https://wallison.pythonanywhere.com/api/token/refresh/', {
 //                     method: 'POST',
 //                     headers: { 'Content-Type': 'application/json' },
 //                     body: JSON.stringify({ refresh: refresh }),
@@ -66,7 +66,7 @@ const validateToken = async (accessToken: any) => {
         return false;
     }
     try {
-        const response = await fetch('http://localhost:8000/api/token/validate/', {
+        const response = await fetch('https://wallison.pythonanywhere.com/api/token/validate/', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
@@ -156,6 +156,6 @@ export const convertUrl = (url: string) => {
     if (url.startsWith('http://localhost')) {
         return url;
     } else {
-        return `http://localhost:8000${url}`;
+        return `https://wallison.pythonanywhere.com${url}`;
     }
 }

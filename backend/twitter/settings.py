@@ -50,7 +50,7 @@ AUTH_USER_MODEL = 'accounts.AccountModel'
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
     'https://wallison.pythonanywhere.com',
-    'https://x-clone-frontend-neon.vercel.app',
+    'https://x-clone-frontend-bl8mlc6hp-wallisondevs.vercel.app',
 ]
 
 CORS_ALLOW_METHODS = [
