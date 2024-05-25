@@ -8,6 +8,8 @@ SECRET_KEY = "django-insecure-mrj*me#@=7)0aj@lh)1*0$9#0s5dud+2iebge=zi-(rhiz17!b
 
 DEBUG = True
 
+SITE_ID = 1
+
 ALLOWED_HOSTS = ['wallison.pythonanywhere.com', 'localhost', '127.0.0.1', 'x-clone-backend-cyan.vercel.app']
 
 INSTALLED_APPS = [
@@ -24,13 +26,44 @@ INSTALLED_APPS = [
     "rest_framework",
     'rest_framework_simplejwt',
     'corsheaders',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.apple',
 ]
+
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': ['profile', 'email'],
+        'AUTH_PARAMS': {'access_type': 'online'},
+        'APP': {
+            'client_id': 'YOUR_GOOGLE_CLIENT_ID',
+            'secret': 'YOUR_GOOGLE_CLIENT_SECRET',
+            'key': ''
+        }
+    }, 
+    'apple': {
+        'APP_ID': 'SEU_APP_ID_DA_APPLE',
+        'APP_SECRET': 'SUA_APP_SECRET_DA_APPLE',
+        'REDIRECT_URI': 'URL_DE_RETORNO_PARA_O_SEU_BACKEND',
+    }
+}
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
     ],
 }
 
@@ -43,6 +76,8 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     'corsheaders.middleware.CorsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
 AUTH_USER_MODEL = 'accounts.AccountModel'
@@ -50,7 +85,7 @@ AUTH_USER_MODEL = 'accounts.AccountModel'
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
     'https://wallison.pythonanywhere.com',
-    'https://x-clone-frontend-neon.vercel.app',
+    'https://x-clone-frontend-bl8mlc6hp-wallisondevs.vercel.app',
 ]
 
 CORS_ALLOW_METHODS = [
@@ -124,8 +159,12 @@ USE_I18N = True
 
 USE_TZ = True
 
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-STATIC_URL = "/static/"
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'build/static')
+]
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')

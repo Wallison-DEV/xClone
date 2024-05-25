@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate
 from rest_framework import serializers
 from django.utils import timezone
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 
 from django.utils import timezone
 
@@ -50,3 +51,11 @@ class CustomTokenObtainPairSerializer(serializers.Serializer):
             'exp': access_token['exp'], 
         }
 
+class CustomTokenRefreshSerializer(TokenRefreshSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        refresh = RefreshToken(attrs['refresh'])
+        data['access'] = str(refresh.access_token)
+        data['exp'] = int(refresh.access_token['exp'])
+        data['refresh'] = str(refresh)
+        return data

@@ -1,6 +1,5 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
 
 import Entrada from './Pages/Entrada';
 import Home from './Pages/Home';
@@ -13,8 +12,6 @@ import Search from './Pages/Search';
 
 import { Container } from './styles';
 import Post from './Pages/Post';
-import { RootReducer } from './Store';
-import { falseValidate, trueValidate } from './Store/reducers/entry';
 
 type RotasProps = {
     togleTheme: () => void;
@@ -22,46 +19,36 @@ type RotasProps = {
 }
 
 const Rotas = ({ togleTheme, isDarkTheme }: RotasProps) => {
-    const isAuthenticated = useSelector((state: RootReducer) => state.entry.isValidate);
-    const dispatch = useDispatch();
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     const checkAuthentication = async () => {
         const accessToken = localStorage.getItem('accessToken');
         const accessTokenExp = localStorage.getItem('accessTokenExp');
+        console.log('tentou check')
         try {
             const isSuccess = await verifyAuthenticated(accessToken, accessTokenExp);
             if (isSuccess) {
                 console.log('Autenticação bem-sucedida');
-                dispatch(trueValidate());
+                setIsAuthenticated(true);
             } else {
                 console.log('Falha na autenticação');
-                dispatch(falseValidate());
+                setIsAuthenticated(false);
             }
         } catch (error) {
             console.error('Erro ao verificar autenticação:', error);
-            dispatch(falseValidate());
+            setIsAuthenticated(false);
         }
     };
 
     useEffect(() => {
         checkAuthentication();
-
-        const handleStorageChange = () => {
-            window.addEventListener('storage', checkAuthentication);
-        };
-
-        window.addEventListener('storage', handleStorageChange);
-
-        return () => {
-            window.removeEventListener('storage', handleStorageChange);
-        }
     }, []);
 
     return (
         <>
             {isAuthenticated && (
                 <Container>
-                    <NavAside isDarkTheme={isDarkTheme} togleTheme={togleTheme} />
+                    <NavAside checkAuthentication={checkAuthentication} isDarkTheme={isDarkTheme} togleTheme={togleTheme} />
                     < >
                         <Routes>
                             <Route path="/home" element={<Home />} />
@@ -76,7 +63,7 @@ const Rotas = ({ togleTheme, isDarkTheme }: RotasProps) => {
             )}
             {!isAuthenticated && (
                 <Routes>
-                    <Route path="/login" element={<Entrada />} />
+                    <Route path="/login" element={<Entrada checkAuthentication={checkAuthentication} />} />
                     <Route path="*" element={<Navigate to="/login" />} />
                 </Routes>
             )}

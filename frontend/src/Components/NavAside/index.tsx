@@ -20,9 +20,10 @@ import { convertUrl } from "../../Utils";
 type NavProps = {
     togleTheme: () => void;
     isDarkTheme: boolean;
+    checkAuthentication: () => Promise<void>
 }
 
-const NavAside = ({ isDarkTheme, togleTheme }: NavProps) => {
+const NavAside = ({ isDarkTheme, togleTheme, checkAuthentication }: NavProps) => {
     const accessToken = localStorage.getItem('accessToken') || ''
     const dispatch = useDispatch()
     const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -46,13 +47,14 @@ const NavAside = ({ isDarkTheme, togleTheme }: NavProps) => {
                         refresh: refreshToken,
                     }),
                 });
-                console.log(responseLogout);
+                if (responseLogout.status === 200) {
+                    localStorage.removeItem("accessToken");
+                    localStorage.removeItem("refreshToken");
+                    localStorage.removeItem("accessTokenExp");
+                    dispatch(clearFollowed())
+                    checkAuthentication()
+                }
             }
-            localStorage.removeItem("accessToken");
-            localStorage.removeItem("refreshToken");
-            localStorage.removeItem("accessTokenExp");
-            dispatch(falseValidate())
-            dispatch(clearFollowed())
         } catch (error: any) {
             console.error('Error logging out:', error.message);
         }
