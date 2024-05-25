@@ -2,10 +2,10 @@ from rest_framework import viewsets, status, exceptions
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 from rest_framework.decorators import action
-from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import UntypedToken, AccessToken
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.views import APIView
 from django.utils import timezone
 from rest_framework.parsers import JSONParser, MultiPartParser
@@ -13,7 +13,7 @@ from django.db.models import Q
 
 from .models import AccountModel
 
-from .serializers import UserSerializer, CustomTokenObtainPairSerializer, FollowerSerializer
+from .serializers import UserSerializer, CustomTokenObtainPairSerializer, FollowerSerializer, CustomTokenRefreshSerializer
 from django.shortcuts import get_object_or_404  
 
 class AccountModelViewSet(viewsets.ModelViewSet):
@@ -21,7 +21,8 @@ class AccountModelViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     lookup_field = 'pk'
     parser_classes = (JSONParser, MultiPartParser)
-    
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
     def list(self, request, *args, **kwargs):
         username_query = request.query_params.get('username', '')
         if username_query:
@@ -123,3 +124,5 @@ class TokenValidateView(APIView):
         except TokenError as e:
             return Response({'error': 'Invalid token', 'details': str(e)}, status=status.HTTP_401_UNAUTHORIZED)
 
+class CustomTokenRefreshView(TokenRefreshView):
+    serializer_class = CustomTokenRefreshSerializer

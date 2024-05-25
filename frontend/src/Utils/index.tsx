@@ -3,56 +3,59 @@ import { Dispatch } from 'react';
 import { clearFollowed, updateFollowedProfiles } from '../Store/reducers/profile';
 
 export const calculateTimeUntilExpiration = (expirationTimeInSeconds: number) => {
+    if (!Number.isFinite(expirationTimeInSeconds)) {
+        console.error('O tempo de expiração não é um número finito:', expirationTimeInSeconds);
+        return 0;
+    }
     const nowInSeconds = Math.floor(Date.now() / 1000);
-    return expirationTimeInSeconds - nowInSeconds;
+    const timeDifference = expirationTimeInSeconds - nowInSeconds;
+    return Number(timeDifference)
 };
 
-// export const scheduleTokenRefresh = async (timeUntilExpiration: number, refreshToken: string, dispatch: Dispatch<any>, attempt: number) => {
-//     if (timeUntilExpiration < 3 || attempt >= 3) {
-//         console.error('Máximo de tentativas de renovação alcançado.');
-//         localStorage.removeItem("accessToken");
-//         localStorage.removeItem("refreshToken");
-//         localStorage.removeItem("accessTokenExp");
-//         window.location.reload()
-//         dispatch(clearFollowed());
-//         return;
-//     }
-//     setTimeout(async () => {
-//         const refresh = refreshToken;
-//         if (refresh) {
-//             try {
-//                 const response = await fetch('https://wallison.pythonanywhere.com/api/token/refresh/', {
-//                     method: 'POST',
-//                     headers: { 'Content-Type': 'application/json' },
-//                     body: JSON.stringify({ refresh: refresh }),
-//                 });
-//                 if (response.ok) {
-//                     const data = await response.json();
-//                     const newAccessToken = data.access;
-//                     const newTokenExp = data.exp;
-//                     const updatedRefreshToken = refresh;
-//                     localStorage.setItem('accessToken', newAccessToken);
-//                     localStorage.setItem('accessTokenExp', newTokenExp);
-//                     localStorage.setItem('refreshToken', updatedRefreshToken);
-//                     const updatedTimeUntilExpiration = calculateTimeUntilExpiration(newTokenExp);
-//                     scheduleTokenRefresh(updatedTimeUntilExpiration, updatedRefreshToken, dispatch, 0);
-//                 } else {
-//                     console.error('Falha ao renovar token:', response.status);
-//                     if (refreshToken) {
-//                         scheduleTokenRefresh(timeUntilExpiration, refreshToken, dispatch, attempt + 1);
-//                     }
-//                     return
-//                 }
-//             } catch (error: any) {
-//                 console.error('Erro ao renovar token:', error.message);
-//                 if (refreshToken) {
-//                     scheduleTokenRefresh(timeUntilExpiration, refreshToken, dispatch, attempt + 1);
-//                 }
-//                 return
-//             }
-//         }
-//     }, timeUntilExpiration * 900);
-// };
+export const scheduleTokenRefresh = async (timeUntilExpiration: number, refreshToken: string, dispatch: Dispatch<any>, attempt: number) => {
+    if (timeUntilExpiration < 3 || Number.isNaN(timeUntilExpiration) || attempt >= 3 || localStorage.getItem("refreshToken") == undefined) {
+        console.error('Máximo de tentativas de renovação alcançado.');
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("accessTokenExp");
+        dispatch(clearFollowed());
+        return;
+    }
+    setTimeout(async () => {
+        const refresh = refreshToken;
+        if (refresh !== undefined) {
+            try {
+                const response = await fetch('http://localhost:8000/api/token/refresh/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ refresh: refresh }),
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    const newAccessToken = data.access;
+                    const newTokenExp = data.exp;
+                    const updatedRefreshToken = refresh;
+                    localStorage.setItem('accessToken', newAccessToken);
+                    localStorage.setItem('accessTokenExp', String(newTokenExp));
+                    const updatedTimeUntilExpiration = calculateTimeUntilExpiration(Number(newTokenExp));
+                    scheduleTokenRefresh(updatedTimeUntilExpiration, updatedRefreshToken, dispatch, 0);
+                } else {
+                    console.error('Falha ao renovar token:', response.status);
+                    if (refreshToken) {
+                        scheduleTokenRefresh(timeUntilExpiration, refreshToken, dispatch, attempt + 1);
+                    }
+                    return
+                }
+            } catch (error: any) {
+                console.error('Erro ao renovar token:', error.message);
+                if (refreshToken) {
+                    scheduleTokenRefresh(timeUntilExpiration, refreshToken, dispatch, attempt + 1);
+                }
+                return
+            }
+        }
+    }, timeUntilExpiration * 900);
+};
 
 const isTokenExpired = (exp: number) => {
     const tokenExp = exp;
@@ -66,14 +69,14 @@ const validateToken = async (accessToken: any) => {
         return false;
     }
     try {
-        const response = await fetch('https://wallison.pythonanywhere.com/api/token/validate/', {
+        const response = await fetch('http://localhost:8000/api/token/validate/', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'application/json',
             },
         });
-        if (response.ok) {
+        if (response.status == 200) {
             console.log('Token is valid:', response);
             return true;
         } else {
@@ -88,7 +91,7 @@ const validateToken = async (accessToken: any) => {
 
 export const verifyAuthenticated = async (accessToken: any, accessTokenExp: any) => {
     if (accessTokenExp) {
-        if (isTokenExpired(accessTokenExp)) {
+        if (isTokenExpired(Number(accessTokenExp))) {
             console.log('Token expirado ou inválido.');
             return false;
         }
@@ -153,9 +156,9 @@ export const timePost = (createdAt: string) => {
 };
 
 export const convertUrl = (url: string) => {
-    if (url.startsWith('https://wallison.pythonanywhere')) {
+    if (url.startsWith('http://localhost')) {
         return url;
     } else {
-        return `https://wallison.pythonanywhere.com${url}`;
+        return `http://localhost:8000${url}`;
     }
 }

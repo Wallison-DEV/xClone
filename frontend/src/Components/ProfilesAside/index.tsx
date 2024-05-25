@@ -28,7 +28,6 @@ const ProfileAside = () => {
                     ) : (
                         <p>Carregando...</p>
                     )}
-
                 </div>
             </div>
         </S.RightAside>

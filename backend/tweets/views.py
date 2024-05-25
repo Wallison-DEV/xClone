@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from operator import attrgetter
 from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from itertools import chain
 
 from rest_framework.views import APIView
@@ -16,7 +16,7 @@ from accounts.models import AccountModel
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = CommentModel.objects.all()
     serializer_class = CommentSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -30,6 +30,7 @@ class PostViewSet(viewsets.ModelViewSet):
     queryset = PostModel.objects.prefetch_related('retweets__user').all()
     serializer_class = PostSerializer
     lookup_field = 'pk'
+    permission_classes = [IsAuthenticatedOrReadOnly]
     
     def get_serializer_class(self):
         return super().get_serializer_class()
@@ -117,6 +118,7 @@ class PostViewSet(viewsets.ModelViewSet):
 class RetweetViewSet(viewsets.ModelViewSet):
     queryset = RetweetModel.objects.all()
     serializer_class = RetweetSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_serializer_class(self):
         return super().get_serializer_class()
@@ -198,7 +200,7 @@ class RetweetViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 class CombinedPostViewSet(viewsets.ViewSet):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     
     def list(self, request):
         content_query = request.query_params.get('content', '')

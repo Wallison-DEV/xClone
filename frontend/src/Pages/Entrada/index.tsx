@@ -1,5 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux'
 
+import { GoogleLogin, GoogleLoginResponse, GoogleLoginResponseOffline } from 'react-google-login';
+
 import googleLogo from '../../assets/icons/google.png'
 import appleLogo from '../../assets/icons/apple-logo.png'
 
@@ -13,10 +15,34 @@ import Login from '../../Components/Login'
 import Cadastro from '../../Components/Cadastro'
 import { useTheme } from 'styled-components'
 
-const Entrada = () => {
+const Entrada = ({ checkAuthentication }: { checkAuthentication: () => Promise<void> }) => {
     const dispatch = useDispatch()
     const theme = useTheme()
     const { loginOpen, registerOpen } = useSelector((state: RootReducer) => state.entry);
+
+    const handleGoogleSuccess = (response: GoogleLoginResponse | GoogleLoginResponseOffline) => {
+        const token = response.code;
+        fetch('http://localhost:8000/accounts/auth/register/google', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ token }),
+        }).then(res => {
+            if (res.ok) {
+                dispatch(openLogin());
+                console.log('Registro com Google realizado com sucesso!');
+            }
+        }).catch(error => console.error('Erro ao registrar-se com Google:', error));
+    };
+
+    const handleGoogleFailure = (error: any) => {
+        console.error('Google register failed:', error);
+    };
+
+    const openModalApple = () => {
+        alert('Registro com Apple não está disponível no momento, por favor, tente outro método');
+    };
 
     const logOpen = () => {
         console.log('Abrindo modal de login...');
@@ -38,11 +64,19 @@ const Entrada = () => {
                             <G.PrimaryTitle className='margin-24'>Acontecendo agora</G.PrimaryTitle>
                             <G.SecondTitle>Inscreva-se Hoje</G.SecondTitle>
                             <S.InputsDiv>
-                                <Button variant='light' className="margin-24">
-                                    <img src={googleLogo} alt="" /> Inscrever-se no Google
-                                </Button>
-                                <Button variant='light'>
-                                    <img src={appleLogo} alt="" /> Inscrever-se com Apple
+                                <GoogleLogin
+                                    clientId="297868879617-fjhuhdhkuer3dkohs0cblra0q89emdpe.apps.googleusercontent.com"
+                                    onSuccess={handleGoogleSuccess}
+                                    onFailure={handleGoogleFailure}
+                                    cookiePolicy={'single_host_origin'}
+                                    render={renderProps => (
+                                        <Button variant='light' className="margin-24" onClick={renderProps.onClick}>
+                                            <img src={googleLogo} alt="" /> Registrar-se com Google
+                                        </Button>
+                                    )}
+                                />
+                                <Button variant='light' onClick={openModalApple}>
+                                    <img src={appleLogo} alt="" /> Registrar-se com Apple
                                 </Button>
                                 <S.Separador>ou</S.Separador>
                                 <div>
@@ -69,10 +103,10 @@ const Entrada = () => {
                         </S.ListDiv>
                     </div>
                 </S.EntryDiv>
-            </div>
-            {loginOpen && <Login />}
+            </div >
+            {loginOpen && <Login checkAuthentication={checkAuthentication} />}
             {registerOpen && <Cadastro />}
-        </div>
+        </div >
     );
 };
 
