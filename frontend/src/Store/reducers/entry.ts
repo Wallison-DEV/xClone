@@ -4,13 +4,17 @@ type EntryProps = {
     loginOpen : boolean,
     registerOpen : boolean,
     followedProfiles: number[], 
-    isValidate: boolean,
+    isAuthenticated: boolean,
+    isCheckingAuth: boolean,
+    checkAuth: boolean,
 }
 const initialState:EntryProps = {
     loginOpen : false,
     registerOpen : false,
     followedProfiles: [], 
-    isValidate : false,
+    isAuthenticated: false,
+    isCheckingAuth: false,
+    checkAuth: false,
 }
 
 const entrySlice = createSlice({
@@ -32,14 +36,22 @@ const entrySlice = createSlice({
         followedProfilesIds(state, action:PayloadAction<number>) {
             state.followedProfiles.push(action.payload); 
         },
-        trueValidate( state){
-            state.isValidate = true;
+        checkingAuthentication(state) {
+            state.isCheckingAuth = true;
         },
-        falseValidate( state){
-            state.isValidate = false;
+        authenticationSuccess(state) {
+            state.isAuthenticated = true;
+            state.isCheckingAuth = false;
         },
+        authenticationFailed(state) {
+            state.isAuthenticated = false;
+            state.isCheckingAuth = false;
+        },
+        toggleCheckAuth(state) {
+            state.checkAuth = !state.checkAuth;
+        }
     }
 })
-export const { openLogin, openRegister, closeModal, followedProfilesIds, trueValidate, falseValidate } = entrySlice.actions;
+export const { openLogin, openRegister, closeModal, followedProfilesIds, checkingAuthentication, authenticationFailed, authenticationSuccess, toggleCheckAuth } = entrySlice.actions;
 
 export default entrySlice.reducer;
