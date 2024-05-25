@@ -1,17 +1,20 @@
-import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 
-import Entrada from './Pages/Entrada';
-import Home from './Pages/Home';
+import { checkingAuthentication, authenticationSuccess, authenticationFailed } from './Store/reducers/entry';
 import { verifyAuthenticated } from './Utils';
-import Profile from './Pages/Profile';
 
 import ProfileAside from './Components/ProfilesAside';
 import NavAside from './Components/NavAside';
+
+import Profile from './Pages/Profile';
+import Entrada from './Pages/Entrada';
 import Search from './Pages/Search';
+import Post from './Pages/Post';
+import Home from './Pages/Home';
 
 import { Container } from './styles';
-import Post from './Pages/Post';
 
 type RotasProps = {
     togleTheme: () => void;
@@ -19,27 +22,29 @@ type RotasProps = {
 }
 
 const Rotas = ({ togleTheme, isDarkTheme }: RotasProps) => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const dispatch = useDispatch();
+    const { isAuthenticated, checkAuth } = useSelector((state: any) => state.entry);
 
     const checkAuthentication = async () => {
+        dispatch(checkingAuthentication());
         const accessToken = localStorage.getItem('accessToken');
         const accessTokenExp = localStorage.getItem('accessTokenExp');
-        console.log('tentou check')
         try {
             const isSuccess = await verifyAuthenticated(accessToken, accessTokenExp);
             if (isSuccess) {
-                console.log('Autenticação bem-sucedida');
-                setIsAuthenticated(true);
+                dispatch(authenticationSuccess());
             } else {
-                console.log('Falha na autenticação');
-                setIsAuthenticated(false);
+                dispatch(authenticationFailed());
             }
         } catch (error) {
             console.error('Erro ao verificar autenticação:', error);
-            setIsAuthenticated(false);
+            dispatch(authenticationFailed());
         }
     };
 
+    useEffect(() => {
+        checkAuthentication();
+    }, [checkAuth]);
     useEffect(() => {
         checkAuthentication();
     }, []);

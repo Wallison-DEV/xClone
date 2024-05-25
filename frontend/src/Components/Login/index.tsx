@@ -20,7 +20,7 @@ import Button from '../Button';
 
 import { Separador, ListDiv } from '../../Pages/Entrada/styles';
 import { Modal, SecondTitle } from '../../styles';
-import { closeModal, openRegister, trueValidate } from '../../Store/reducers/entry';
+import { closeModal, openRegister } from '../../Store/reducers/entry';
 
 const Login = ({ checkAuthentication }: { checkAuthentication: () => Promise<void> }) => {
     const theme = useTheme()
@@ -66,8 +66,8 @@ const Login = ({ checkAuthentication }: { checkAuthentication: () => Promise<voi
                 body: JSON.stringify({ token }),
             }).then(res => {
                 if (res.ok) {
-                    dispatch(trueValidate())
                     console.log('Login com Google realizado com sucesso!');
+                    checkAuthentication()
                 }
             }).catch(error => console.error('Erro ao logar com Google:', error));
         }
