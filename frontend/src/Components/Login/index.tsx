@@ -1,11 +1,10 @@
 import { useTheme } from 'styled-components';
 import { useDispatch } from 'react-redux';
 import { useCallback, useState } from 'react';
+// import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
 
 import { calculateTimeUntilExpiration, scheduleTokenRefresh } from '../../Utils';
 import { useDoLoginMutation } from '../../Services/api';
-
-import { GoogleLogin, GoogleLoginResponse, GoogleLoginResponseOffline } from 'react-google-login';
 
 import googleLogo from '../../assets/icons/google.png'
 import appleLogo from '../../assets/icons/apple-logo.png'
@@ -21,21 +20,31 @@ import Button from '../Button';
 import { Separador, ListDiv } from '../../Pages/Entrada/styles';
 import { Modal, SecondTitle } from '../../styles';
 import { closeModal, openRegister } from '../../Store/reducers/entry';
+import ConfirmModal from '../ConfirmModal';
 
 const Login = ({ checkAuthentication }: { checkAuthentication: () => Promise<void> }) => {
     const theme = useTheme()
-    const [usernameOrEmail, setUsernameOrEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [usernameOrEmail, setUsernameOrEmail] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
     const [errorMessage, setErrorMessage] = useState('');
     const [isEmail, setIsEmail] = useState(true);
     const [purchase] = useDoLoginMutation();
     const dispatch = useDispatch();
 
+    const [isAppleOpen, setIsAppleOpen] = useState(false)
+    const [isGoogleOpen, setIsGoogleOpen] = useState(false)
+
+    const openModalApple = () => {
+        setIsAppleOpen(true);
+    };
+    const openModalGoogle = () => {
+        setIsGoogleOpen(true);
+    };
+
     const handleLogin = useCallback(async () => {
         try {
             const requestBody: LoginRequestBody = { username_or_email: usernameOrEmail, password: password };
             const response = await purchase(requestBody).unwrap();
-            console.log('resposta do login', response)
             if (response.status == 400) {
                 console.error('Error logging in:', response.error);
                 setErrorMessage('Falha ao fazer login. Por favor, verifique suas credenciais.');
@@ -54,32 +63,37 @@ const Login = ({ checkAuthentication }: { checkAuthentication: () => Promise<voi
         }
     }, [purchase, dispatch, usernameOrEmail, password]);
 
-    const handleGoogleSuccess = (response: GoogleLoginResponse | GoogleLoginResponseOffline) => {
-        const token = response.code;
-        if (token) {
-            localStorage.setItem('accessToken', token);
-            fetch('http://localhost:8000/accounts/auth/google/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ token }),
-            }).then(res => {
-                if (res.ok) {
-                    console.log('Login com Google realizado com sucesso!');
-                    checkAuthentication()
-                }
-            }).catch(error => console.error('Erro ao logar com Google:', error));
-        }
-    };
+    // const handleGoogleSuccess = useCallback(async (credentialResponse: CredentialResponse) => {
+    //     const idToken = credentialResponse.credential;
+    //     try {
+    //         const response = await fetch('http://localhost:8000/accounts/auth/login/google', {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //             },
+    //             body: JSON.stringify({ token: idToken }),
+    //         });
+    //         if (!response.ok) {
+    //             console.error('Error logging in with Google:', response.statusText);
+    //             setErrorMessage('Falha ao fazer login com Google. Tente novamente.');
+    //             return;
+    //         }
+    //         const responseData = await response.json();
+    //         const { access: accessToken, exp: tokenExp, refresh: refreshToken } = responseData;
+    //         localStorage.setItem('accessToken', accessToken);
+    //         localStorage.setItem('accessTokenExp', tokenExp.toString());
+    //         localStorage.setItem('refreshToken', refreshToken);
+    //         await checkAuthentication();
+    //     } catch (error) {
+    //         console.error('Error logging in with Google:', error);
+    //         setErrorMessage('Falha ao fazer login com Google. Tente novamente.');
+    //     }
+    // }, [checkAuthentication]);
 
-    const handleGoogleFailure = (error: any) => {
-        console.error('Google login failed:', error);
-    };
-
-    const openModalApple = () => {
-        alert('Login com Apple não está disponível no momento, por favor, tente outro método');
-    };
+    // const handleGoogleFailure = () => {
+    //     console.error('Google login failed');
+    //     setErrorMessage('Falha na autenticação com Google.');
+    // };
 
     const handleSubmit = (event: { preventDefault: () => void; }) => {
         event.preventDefault();
@@ -99,47 +113,36 @@ const Login = ({ checkAuthentication }: { checkAuthentication: () => Promise<voi
                     {isEmail ? (
                         <ListDiv>
                             <SecondTitle>Entrar no X</SecondTitle>
-                            <GoogleLogin
-                                clientId="297868879617-fjhuhdhkuer3dkohs0cblra0q89emdpe.apps.googleusercontent.com"
-                                onSuccess={handleGoogleSuccess}
-                                onFailure={handleGoogleFailure}
-                                cookiePolicy={'single_host_origin'}
-                                render={renderProps => (
-                                    <Button variant='light' className="margin-24" onClick={renderProps.onClick}>
-                                        <img src={googleLogo} alt="" /> Entrar com Google
-                                    </Button>
-                                )}
-                            />
+                            <Button variant='light' className="margin-24" onClick={openModalGoogle}>
+                                <img src={googleLogo} alt="" /> Registrar-se com Google
+                            </Button>
+                            {/* <GoogleLogin onSuccess={handleGoogleSuccess} onError={handleGoogleFailure} text='signup_with' /> */}
                             <Button variant='light' onClick={openModalApple}>
                                 <img src={appleLogo} alt="" /> Registrar-se com Apple
                             </Button>
                             <Separador>ou</Separador>
                             <S.InputDiv>
                                 <span>E-mail ou nome de usuário</span>
-                                <input type="text" value={usernameOrEmail} onChange={(e) => setUsernameOrEmail(e.target.value)} />
+                                <input id='name' type="text" value={usernameOrEmail} onChange={(e) => setUsernameOrEmail(e.target.value)} />
                             </S.InputDiv>
                             <S.FinalDiv>
-                                <Button onClick={() => setIsEmail(false)} variant='dark' className="margin-24" type="submit">Avançar</Button>
+                                <Button onClick={() => usernameOrEmail && usernameOrEmail != '' && (setIsEmail(false))} variant='dark' className="margin-24" type="submit">Avançar</Button>
                                 <Button variant='light' >Esqueceu a senha?</Button>
                                 <p>Não tem uma conta? <span onClick={() => { close; dispatch(openRegister()) }}>Inscreva-se</span></p>
                             </S.FinalDiv>
                         </ListDiv>
                     ) : (
                         <S.PasswordDiv>
-                            <div>
-                                <SecondTitle>Digite sua senha</SecondTitle>
-                                <S.InputDiv>
-                                    <span>E-mail ou nome de usuário</span>
-                                    <input type="text" value={usernameOrEmail} disabled />
-                                    {usernameOrEmail}
-                                </S.InputDiv>
-                                <S.InputDiv>
-                                    <span>Senha</span>
-                                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-                                    {password}
-                                </S.InputDiv>
-                                {errorMessage && <S.Error>{errorMessage}</S.Error>}
-                            </div>
+                            <SecondTitle>Digite sua senha</SecondTitle>
+                            <S.InputDiv>
+                                <span style={{ cursor: 'auto' }}>E-mail ou nome de usuário</span>
+                                <input id='name' type="text" value={usernameOrEmail} disabled />
+                            </S.InputDiv>
+                            <S.InputDiv>
+                                <span >Senha</span>
+                                <input id='password' type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                            </S.InputDiv>
+                            {errorMessage && <S.Error>{errorMessage}</S.Error>}
                             <S.FinalDiv>
                                 <Button variant='dark' className="margin-24" type="submit">Entrar</Button>
                                 <p>Não tem uma conta? <span onClick={() => { close; dispatch(openRegister()) }}>Inscreva-se</span></p>
@@ -148,6 +151,18 @@ const Login = ({ checkAuthentication }: { checkAuthentication: () => Promise<voi
                     )}
                 </S.StyledForm>
             </S.LoginDiv>
+            {isAppleOpen && (
+                <ConfirmModal
+                    text='Desculpe, o login com Apple não está disponível no momento. Por favor, escolha outra forma de acesso.'
+                    onClose={() => setIsAppleOpen(false)}
+                />
+            )}
+            {isGoogleOpen && (
+                <ConfirmModal
+                    text='Desculpe, o login com Google não está disponível no momento. Por favor, escolha outra forma de acesso.'
+                    onClose={() => setIsGoogleOpen(false)}
+                />
+            )}
             <div className='overlay' onClick={close} />
         </Modal>
     )

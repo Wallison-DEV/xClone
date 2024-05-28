@@ -1,6 +1,7 @@
+import { useTheme } from 'styled-components'
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
-
-import { GoogleLogin, GoogleLoginResponse, GoogleLoginResponseOffline } from 'react-google-login';
+// import { GoogleLogin } from '@react-oauth/google';
 
 import googleLogo from '../../assets/icons/google.png'
 import appleLogo from '../../assets/icons/apple-logo.png'
@@ -13,44 +14,45 @@ import { openLogin, openRegister } from '../../Store/reducers/entry'
 import { RootReducer } from '../../Store'
 import Login from '../../Components/Login'
 import Cadastro from '../../Components/Cadastro'
-import { useTheme } from 'styled-components'
+import ConfirmModal from '../../Components/ConfirmModal';
 
 const Entrada = ({ checkAuthentication }: { checkAuthentication: () => Promise<void> }) => {
     const dispatch = useDispatch()
     const theme = useTheme()
     const { loginOpen, registerOpen } = useSelector((state: RootReducer) => state.entry);
+    const [isAppleOpen, setIsAppleOpen] = useState(false)
+    const [isGoogleOpen, setIsGoogleOpen] = useState(false)
 
-    const handleGoogleSuccess = (response: GoogleLoginResponse | GoogleLoginResponseOffline) => {
-        const token = response.code;
-        fetch('http://localhost:8000/accounts/auth/register/google', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ token }),
-        }).then(res => {
-            if (res.ok) {
-                dispatch(openLogin());
-                console.log('Registro com Google realizado com sucesso!');
-            }
-        }).catch(error => console.error('Erro ao registrar-se com Google:', error));
-    };
-
-    const handleGoogleFailure = (error: any) => {
-        console.error('Google register failed:', error);
-    };
+    // const handleGoogleSuccess = (credentialResponse: any) => {
+    //     fetch('http://localhost:8000/accounts/auth/register/google', {
+    //         method: 'POST',
+    //         headers: { 'Content-Type': 'application/json' },
+    //         body: JSON.stringify({ token: credentialResponse.credential }),
+    //     }).then(res => {
+    //         if (res.ok) {
+    //             dispatch(openLogin());
+    //             console.log('Registro com Google realizado com sucesso!');
+    //         }
+    //     }).catch(error => {
+    //         console.error('Erro ao registrar-se com Google:', error);
+    //     });
+    // };
+    // const handleGoogleFailure = () => {
+    //     console.error('Google login failed');
+    // };
 
     const openModalApple = () => {
-        alert('Registro com Apple não está disponível no momento, por favor, tente outro método');
+        setIsAppleOpen(true);
+    };
+    const openModalGoogle = () => {
+        setIsGoogleOpen(true);
     };
 
     const logOpen = () => {
-        console.log('Abrindo modal de login...');
         dispatch(openLogin());
     };
 
     const regOpen = () => {
-        console.log('Abrindo modal de cadastro...');
         dispatch(openRegister());
     };
 
@@ -64,17 +66,10 @@ const Entrada = ({ checkAuthentication }: { checkAuthentication: () => Promise<v
                             <G.PrimaryTitle className='margin-24'>Acontecendo agora</G.PrimaryTitle>
                             <G.SecondTitle>Inscreva-se Hoje</G.SecondTitle>
                             <S.InputsDiv>
-                                <GoogleLogin
-                                    clientId="297868879617-fjhuhdhkuer3dkohs0cblra0q89emdpe.apps.googleusercontent.com"
-                                    onSuccess={handleGoogleSuccess}
-                                    onFailure={handleGoogleFailure}
-                                    cookiePolicy={'single_host_origin'}
-                                    render={renderProps => (
-                                        <Button variant='light' className="margin-24" onClick={renderProps.onClick}>
-                                            <img src={googleLogo} alt="" /> Registrar-se com Google
-                                        </Button>
-                                    )}
-                                />
+                                <Button variant='light' className="margin-24" onClick={openModalGoogle}>
+                                    <img src={googleLogo} alt="" /> Registrar-se com Google
+                                </Button>
+                                {/* <GoogleLogin onSuccess={handleGoogleSuccess} onError={handleGoogleFailure} text='signup_with' /> */}
                                 <Button variant='light' onClick={openModalApple}>
                                     <img src={appleLogo} alt="" /> Registrar-se com Apple
                                 </Button>
@@ -106,6 +101,12 @@ const Entrada = ({ checkAuthentication }: { checkAuthentication: () => Promise<v
             </div >
             {loginOpen && <Login checkAuthentication={checkAuthentication} />}
             {registerOpen && <Cadastro />}
+            {isAppleOpen && <>
+                <ConfirmModal text='Desculpe, o registro com Apple não está disponível no momento. Por favor, escolha outra forma de cadastro.' onClose={() => setIsAppleOpen(false)} />
+            </>}
+            {isGoogleOpen && <>
+                <ConfirmModal text='Desculpe, o registro com Google não está disponível no momento. Por favor, escolha outra forma de cadastro.' onClose={() => setIsGoogleOpen(false)} />
+            </>}
         </div >
     );
 };

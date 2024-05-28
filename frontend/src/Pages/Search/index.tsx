@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import * as S from './styles'
 import { StyledHeader } from '../../Components/PostList/styles'
@@ -13,12 +13,9 @@ const Search = () => {
     const accessToken = localStorage.getItem("accessToken") || '';
     const [typeFilterPosts, setTypeFilterPosts] = useState(true)
     const [filter, setFilter] = useState(' ')
-    const { data: filteredUsers, isLoading: loadingUsers, isSuccess } = useFilterUserQuery({ content: filter, accessToken });
+    const { data: filteredUsers, isLoading: loadingUsers } = useFilterUserQuery({ content: filter, accessToken });
     const { data: filteredPosts, isLoading: loadingPosts } = useFilterPostQuery({ content: filter, accessToken })
 
-    useEffect(() => {
-        console.log('filtered posts', filteredPosts)
-    }, [isSuccess])
     return (
         <S.SearchContainer>
             <input type="text" placeholder='buscar' onChange={(e) => setFilter(e.target.value)} />

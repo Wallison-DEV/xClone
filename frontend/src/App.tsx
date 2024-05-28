@@ -1,6 +1,7 @@
 import { Provider } from 'react-redux'
 import { BrowserRouter } from 'react-router-dom'
 import { ThemeProvider } from 'styled-components'
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 import Rotas from "./routes"
 import { EstiloGlobal } from "./styles"
@@ -19,10 +20,12 @@ function App() {
   return (
     <ThemeProvider theme={estaUsandoTemaDark ? TemaDark : TemaLight}>
       <Provider store={store}>
-        <BrowserRouter>
-          <EstiloGlobal />
-          <Rotas isDarkTheme={estaUsandoTemaDark} togleTheme={togleTheme} />
-        </BrowserRouter>
+        <GoogleOAuthProvider clientId='297868879617-6igc8ikt47juhj3p5kkg6agn5t7175bs.apps.googleusercontent.com'>
+          <BrowserRouter>
+            <EstiloGlobal />
+            <Rotas isDarkTheme={estaUsandoTemaDark} togleTheme={togleTheme} />
+          </BrowserRouter>
+        </GoogleOAuthProvider>
       </Provider>
     </ThemeProvider>
   )

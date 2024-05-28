@@ -13,6 +13,7 @@ import pictureIcon from '../../assets/icons/pictureIcon.png'
 import Button from "../Button";
 import MinimizedTweet from "../MinimizedTweet";
 import { convertUrl } from "../../Utils";
+import ConfirmModal from "../ConfirmModal";
 
 interface PostRetweetProps {
     post: PostProps;
@@ -25,6 +26,7 @@ const PostRetweet: React.FC<PostRetweetProps> = ({ post, onClose }) => {
     const [doRepost, { isError, error, isSuccess }] = useDoRepostMutation();
     const [textRepostValue, setTextRepostValue] = useState('')
     const [sourceRepostValue, setSourceRepostValue] = useState<File | null>(null)
+    const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false)
 
     const handleSourceRepostChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -47,11 +49,9 @@ const PostRetweet: React.FC<PostRetweetProps> = ({ post, onClose }) => {
             const tweet = post.id;
             const accessToken = localStorage.getItem("accessToken") || '';
 
-            const response = await doRepost({
+            await doRepost({
                 content, tweet, media, accessToken,
             });
-            console.log('response: ', response)
-
         } catch (error) {
             console.error('Error making repost:', error);
         }
@@ -61,10 +61,9 @@ const PostRetweet: React.FC<PostRetweetProps> = ({ post, onClose }) => {
             console.log("repost error", error);
         }
         if (isSuccess) {
-            console.log(post.id)
-            console.log("Repostado com sucesso!");
             setSourceRepostValue(null);
-            setTextRepostValue("");
+            setTextRepostValue('');
+            setIsSuccessModalOpen(true);
         }
     }, [isSuccess, isError, error]);
     return (
@@ -105,6 +104,12 @@ const PostRetweet: React.FC<PostRetweetProps> = ({ post, onClose }) => {
                     </div>
                 </PostForm>
             </S.StyledPostDetails>
+            {isSuccessModalOpen && (
+                <ConfirmModal
+                    text='Retweet criado com sucessso!.'
+                    onClose={() => setIsSuccessModalOpen(false)}
+                />
+            )}
         </LoginDiv>
     )
 }

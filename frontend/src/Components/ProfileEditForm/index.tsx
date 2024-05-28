@@ -14,6 +14,7 @@ import Button from "../Button";
 import { InputDiv } from "../Login/styles";
 import { useUpdateProfileMutation } from "../../Services/api";
 import { convertUrl } from "../../Utils";
+import ConfirmModal from "../ConfirmModal";
 
 interface ProfileFormProps {
     profile: UserProfile | undefined;
@@ -23,6 +24,8 @@ interface ProfileFormProps {
 const ProfileForm: React.FC<ProfileFormProps> = ({ profile }) => {
     const accessToken = localStorage.getItem("accessToken")
     const dispatch = useDispatch()
+    const [profilePurchase, { isSuccess, isError }] = useUpdateProfileMutation()
+
     const [profileImage, setProfileImage] = useState<File | string>(profile?.profile_image || profileImg);
     const [backgroundImage, setBackgroundImage] = useState<File | string | null>(profile?.background_image || null);
     const [bio, setBio] = useState<string>(profile?.bio || '')
@@ -30,8 +33,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ profile }) => {
     const [editor, setEditor] = useState<AvatarEditor | null>(null);
     const [scale, setScale] = useState(1);
     const [isEditingImg, setIsEditingImg] = useState(false)
+    const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false)
+    const [isErrorModalOpen, setIsErrorModalOpen] = useState(false)
     const [pageProfileForm, setPageProfileForm] = useState<number>(1)
-    const [profilePurchase] = useUpdateProfileMutation()
 
     const handleProfileImageChange = (e: any) => {
         const file = e.target.files[0];
@@ -91,17 +95,24 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ profile }) => {
         }
 
         try {
-            const response = await profilePurchase({
+            await profilePurchase({
                 body: formData,
                 accessToken,
             });
-            console.log(response)
-            // if (response.data && response.data.isSuccess) {
-            //     dispatch(closeModalEditProfile());
-            // }
+            if (isError) {
+                setIsErrorModalOpen(true);
+            }
+            if (isSuccess) {
+                setIsSuccessModalOpen(true);
+            }
         } catch (error) {
             console.error('Erro ao enviar o formulário:', error);
         }
+    };
+
+    const closeSuccessModal = () => {
+        setIsSuccessModalOpen(!isSuccessModalOpen);
+        dispatch(closeModalEditProfile());
     };
 
     const handleNextPage = () => {
@@ -268,6 +279,18 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ profile }) => {
                     </S.BackgroundSelect>
                 )}
             </S.ProfileModal>
+            {isSuccessModalOpen && (
+                <ConfirmModal
+                    text='Perfil alterado com sucesso!'
+                    onClose={closeSuccessModal}
+                />
+            )}
+            {isErrorModalOpen && (
+                <ConfirmModal
+                    text='Falha ao alterar perfil, tente novamente.'
+                    onClose={() => setIsErrorModalOpen(false)}
+                />
+            )}
             <div className='overlay' onClick={() => dispatch(closeModalEditProfile())} />
         </Modal >
     )
