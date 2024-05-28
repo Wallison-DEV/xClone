@@ -8,6 +8,7 @@ import Retweet from '../../Components/Retweet'
 import UsersList from '../../Components/UsersList'
 
 import { useFilterPostQuery, useFilterUserQuery } from '../../Services/api'
+import Loader from '../../Components/Loader'
 
 const Search = () => {
     const accessToken = localStorage.getItem("accessToken") || '';
@@ -27,7 +28,7 @@ const Search = () => {
                 <div>
                     {
                         loadingPosts ? (
-                            <h1> Carregando</h1>
+                            <Loader />
                         ) : (
                             <>
                                 {filter && filteredPosts && filteredPosts.length > 0 ? (
@@ -48,7 +49,7 @@ const Search = () => {
                 <>
                     {
                         loadingUsers ? (
-                            <h1> Carregando</h1>
+                            <Loader />
                         ) : (
                             <>
                                 {filter && filteredUsers && filteredUsers.length > 0 ? (

@@ -16,6 +16,7 @@ import Button from "../Button";
 import Retweet from "../Retweet";
 import Tweet from "../Tweet";
 import { LoginDiv } from "../Login/styles";
+import ConfirmModal from "../ConfirmModal";
 
 interface PostDetailsProps {
     post: (PostProps | RetweetProps);
@@ -24,8 +25,10 @@ interface PostDetailsProps {
 
 const PostDetails: React.FC<PostDetailsProps> = ({ post, onClose }) => {
     const navigate = useNavigate()
-    const [doComment, { isError, error, isSuccess }] = useDoCommentMutation();
+    const [doComment] = useDoCommentMutation();
+    const [commentList, setCommentList] = useState<Comment[]>([])
     const [textCommentValue, setTextCommentValue] = useState('')
+    const [isModalSuccessOpen, setIsModalSuccessOpen] = useState(false)
     const [sourceCommentValue, setSourceCommentValue] = useState<File | null>(null)
 
     const handleSourceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -78,25 +81,24 @@ const PostDetails: React.FC<PostDetailsProps> = ({ post, onClose }) => {
             const object_id = String(post.id);
             const media = sourceCommentValue || null;
             const accessToken = localStorage.getItem("accessToken") || '';
-            await doComment({
+            const response = await doComment({
                 content, content_type, object_id, media, accessToken,
             });
-            setSourceCommentValue(null);
-            setTextCommentValue('');
-
+            console.log(response)
+            if ('data' in response && response.data.status === 201) {
+                setCommentList([...commentList, response.data])
+                setSourceCommentValue(null);
+                setTextCommentValue('');
+                setIsModalSuccessOpen(true)
+            }
         } catch (error) {
             console.error('Error making comment:', error);
         }
     };
     useEffect(() => {
-        if (isError) {
-            console.log("comment error", error);
-        }
-        if (isSuccess) {
-            setSourceCommentValue(null);
-            setTextCommentValue("");
-        }
-    }, [isSuccess, isError, error]);
+        setCommentList([...post.comments]);
+    }, []);
+
 
     return (
         <LoginDiv>
@@ -136,22 +138,25 @@ const PostDetails: React.FC<PostDetailsProps> = ({ post, onClose }) => {
                             </footer>
                         </div>
                     </PostForm>
-                    {post.comments.map(comment => (
-                        <div key={comment.id}>
-                            <img src={userIcon} alt="Imagem de usuário" />
-                            <div>
-                                <S.CommentHeader onClick={() => handleUserClick(comment.user.id)}>
-                                    {comment.user.username}<span>@{comment.user.username} · {timePost(comment.created_at)}</span>
-                                </S.CommentHeader>
-                                <S.CommentContent>
-                                    {comment.content}
-                                    {renderMedia(comment)}
-                                </S.CommentContent>
+                    {commentList
+                        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+                        .map(comment => (
+                            <div key={comment.id}>
+                                <img src={userIcon} alt="Imagem de usuário" />
+                                <div>
+                                    <S.CommentHeader onClick={() => handleUserClick(comment.user.id)}>
+                                        {comment.user.username}<span>@{comment.user.username} · {timePost(comment.created_at)}</span>
+                                    </S.CommentHeader>
+                                    <S.CommentContent>
+                                        {comment.content}
+                                        {renderMedia(comment)}
+                                    </S.CommentContent>
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
                 </S.CommentsSection>
             </S.StyledPostDetails>
+            {isModalSuccessOpen && <ConfirmModal onClose={() => setIsModalSuccessOpen(false)} text='Comentário criado com sucesso!' />}
         </LoginDiv>
     )
 }

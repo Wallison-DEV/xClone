@@ -7,6 +7,7 @@ import * as S from './styles'
 import Retweet from "../Retweet";
 import Tweet from "../Tweet";
 import PostForm from "../PostForm";
+import Loader from "../Loader";
 
 const PostList = () => {
     const accessToken = localStorage.getItem('accessToken') || ''
@@ -41,7 +42,7 @@ const PostList = () => {
             <PostForm isNotModal={true} />
             <div>
                 {isLoadingFollowedPosts || isLoadingSuggestedPosts ? (
-                    <h1>Carregando</h1>
+                    <Loader />
                 ) : (
                     <>
                         {

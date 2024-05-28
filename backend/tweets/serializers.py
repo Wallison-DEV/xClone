@@ -17,12 +17,6 @@ class CommentSerializer(serializers.ModelSerializer):
     def get_user(self, obj):
         return {'id': obj.user.id, 'username': obj.user.username, 'profile_image': obj.user.profile_image.url if obj.user.profile_image else ''}    
 
-    def create(self, validated_data):
-        user = self.context['request'].user
-        validated_data['user'] = user
-        comment = CommentModel.objects.create(**validated_data)
-        return comment
-
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         

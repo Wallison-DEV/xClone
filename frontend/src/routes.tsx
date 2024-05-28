@@ -30,8 +30,8 @@ const Rotas = ({ togleTheme, isDarkTheme }: RotasProps) => {
         const accessToken = localStorage.getItem('accessToken');
         const accessTokenExp = localStorage.getItem('accessTokenExp');
         try {
-            const isSuccess = await verifyAuthenticated(accessToken, accessTokenExp);
-            if (isSuccess) {
+            const reponse = await verifyAuthenticated(accessToken, accessTokenExp);
+            if (reponse) {
                 dispatch(authenticationSuccess());
             } else {
                 dispatch(authenticationFailed());

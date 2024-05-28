@@ -37,7 +37,7 @@ class AccountModelViewSet(viewsets.ModelViewSet):
 
         filtered_user = filtered_user.order_by('username').all()
         serializer = UserSerializer(filtered_user, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=['get'], permission_classes=[IsAuthenticated])
     def my_user(self, request, pk=None):
@@ -61,7 +61,7 @@ class AccountModelViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, pk=None):
         user = self.get_object()
         serializer = self.get_serializer(user)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
     def create(self, request, *args, **kwargs):
         username = request.data.get('username')
@@ -92,7 +92,7 @@ class AccountModelViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(user, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response({'profile':serializer.data, 'status':status.HTTP_200_OK})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])

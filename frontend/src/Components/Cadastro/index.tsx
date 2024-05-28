@@ -6,6 +6,7 @@ import { Modal, SecondTitle } from "../../styles";
 import { closeModal, openLogin } from "../../Store/reducers/entry";
 
 import XLogo from '../../assets/img/twitter-logo.png'
+import { ConfirmDiv } from "../ConfirmModal/styles";
 
 const Cadastro = () => {
     const [username, setUsername] = useState('');
@@ -13,6 +14,7 @@ const Cadastro = () => {
     const [arroba, setArroba] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const [isModalSuccessOpen, setIsModalSuccessOpen] = useState(false);
     const dispatch = useDispatch();
 
     const handleSubmit = async (e: { preventDefault: () => void; }) => {
@@ -28,7 +30,7 @@ const Cadastro = () => {
             });
 
             if (response.ok) {
-                alert('Perfil registrado com sucesso!');
+                setIsModalSuccessOpen(true)
                 setEmail('')
                 setUsername('')
                 setArroba('')
@@ -78,6 +80,20 @@ const Cadastro = () => {
                     </PasswordDiv>
                 </StyledForm>
             </LoginDiv>
+            {isModalSuccessOpen && (
+                <>
+                    <Modal>
+                        <ConfirmDiv>
+                            <p>Peril criado com sucesso!</p>
+                            <p>
+                                <span onClick={() => { close(); dispatch(openLogin()); setIsModalSuccessOpen(false); }}>Ir para a sessão de entrada</span>
+                            </p>
+                            <Button variant='light' onClick={() => setIsModalSuccessOpen(false)}>Ok</Button>
+                        </ConfirmDiv>
+                        <div className='overlay' onClick={() => setIsModalSuccessOpen(false)} />
+                    </Modal>
+                </>
+            )}
             <div className='overlay' onClick={close} />
         </Modal >
     )

@@ -52,16 +52,18 @@ const UsersList = ({ users, followButton }: UsersListProps) => {
     return (
         <>
             {users && users.map((profile: User) => (
-                <S.Profile onClick={() => handleUserClick(profile.id)} key={profile.id}>
-                    <div>
-                        <img src={profile.profile_image ? convertUrl(profile.profile_image) : userIcon} alt="" />
+                <S.ProfileWrapper key={profile.id}>
+                    <S.Profile onClick={() => handleUserClick(profile.id)}>
                         <div>
-                            <p>{profile.username}</p>
-                            <span>@{profile.username}</span>
+                            <img src={profile.profile_image ? convertUrl(profile.profile_image) : userIcon} alt="" />
+                            <div>
+                                <p>{profile.username}</p>
+                                <span>@{profile.username}</span>
+                            </div>
                         </div>
-                    </div>
+                    </S.Profile>
                     {followButton && (
-                        <>
+                        <S.FollowButtonWrapper>
                             {isProfileFollowed(profile.id) ? (
                                 <Button variant='dark' maxwidth='100px' onClick={() => handleFollowProfile(profile.id)}>
                                     Seguindo
@@ -71,9 +73,9 @@ const UsersList = ({ users, followButton }: UsersListProps) => {
                                     Seguir
                                 </Button>
                             )}
-                        </>
+                        </S.FollowButtonWrapper>
                     )}
-                </S.Profile>
+                </S.ProfileWrapper>
             ))}
         </>
     )
