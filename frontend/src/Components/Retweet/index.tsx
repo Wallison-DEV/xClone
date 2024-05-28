@@ -11,9 +11,8 @@ import { Modal } from '../../styles';
 import * as S from '../Tweet/styles';
 
 import userIcon from '../../assets/img/profile_avatar.png';
-import commentIcon from '../../assets/icons/comment.png';
-import likeIcon from '../../assets/icons/like.png';
 import likedIcon from '../../assets/icons/liked.png';
+import { FaRegCommentAlt } from "react-icons/fa";
 
 import LikedByList from '../LikedByList';
 import PostDetails from '../Postdetails';
@@ -21,6 +20,7 @@ import MinimizedTweet from '../MinimizedTweet';
 import { ImageDiv } from '../Tweet/styles';
 import Button from '../Button';
 import PostEditForm from '../PostEditForm';
+import { useTheme } from 'styled-components';
 
 type Props = {
     props: RetweetProps;
@@ -28,6 +28,7 @@ type Props = {
 };
 
 const Retweet: React.FC<Props> = ({ props, modalDisabled }) => {
+    const theme = useTheme();
     const accessToken = localStorage.getItem("accessToken") || '';
     const navigate = useNavigate();
     const myUserProfile = useSelector((state: RootReducer) => state.profile.myUser);
@@ -185,7 +186,7 @@ const Retweet: React.FC<Props> = ({ props, modalDisabled }) => {
                             {likeCount}
                         </div>
                         <button onClick={() => handleLikeClick(props.id)} disabled={isAddingLike}>
-                            <img src={liked ? likedIcon : likeIcon} className={liked ? 'liked' : 'like-button'} />
+                            <img src={liked ? likedIcon : (theme.likeIcon)} className={liked ? 'liked' : 'like-button'} />
                         </button>
                     </span>
                 </div >
@@ -193,11 +194,11 @@ const Retweet: React.FC<Props> = ({ props, modalDisabled }) => {
                     {props.comments && (
                         <span onClick={() => handleOpenPostModal()}>
                             {Array.isArray(props.comments) ? props.comments.length : 0}
-                            <img src={commentIcon} alt="comment" />
+                            <FaRegCommentAlt size={14} />
                         </span>
                     )}
                 </div >
-            </S.PostDetails >
+            </S.PostDetails>
             {modalLikeIsOpen && <LikedByList onClose={handleOpenLikeModal} liked_by={props.likes.liked_by || []} />}
             {
                 modalPostIsOpen &&

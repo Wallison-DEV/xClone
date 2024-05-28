@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { Colors } from "../../styles";
 
 export const ConfirmDiv = styled.div`
     background: ${(props)=> props.theme.corDeFundo};
@@ -12,4 +13,9 @@ export const ConfirmDiv = styled.div`
     z-index: 1;
     width: 100%;
     max-width: 480px;
+
+    span {
+        cursor: pointer;
+        color: ${Colors.blue};
+    }
 `

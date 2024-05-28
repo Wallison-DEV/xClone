@@ -24,7 +24,7 @@ interface ProfileFormProps {
 const ProfileForm: React.FC<ProfileFormProps> = ({ profile }) => {
     const accessToken = localStorage.getItem("accessToken")
     const dispatch = useDispatch()
-    const [profilePurchase, { isSuccess, isError }] = useUpdateProfileMutation()
+    const [profilePurchase] = useUpdateProfileMutation()
 
     const [profileImage, setProfileImage] = useState<File | string>(profile?.profile_image || profileImg);
     const [backgroundImage, setBackgroundImage] = useState<File | string | null>(profile?.background_image || null);
@@ -95,15 +95,16 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ profile }) => {
         }
 
         try {
-            await profilePurchase({
+            const response = await profilePurchase({
                 body: formData,
                 accessToken,
             });
-            if (isError) {
-                setIsErrorModalOpen(true);
-            }
-            if (isSuccess) {
+
+            console.log(response);
+            if ('data' in response && response.data.status == 200) {
                 setIsSuccessModalOpen(true);
+            } else {
+                setIsErrorModalOpen(true);
             }
         } catch (error) {
             console.error('Erro ao enviar o formulário:', error);

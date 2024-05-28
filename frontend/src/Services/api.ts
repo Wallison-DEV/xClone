@@ -113,7 +113,7 @@ const api = createApi({
                 },
             })
         }),
-        doPost: builder.mutation({
+        doPost: builder.mutation<number , { body: any; accessToken: string }>({
             query: ({ body, accessToken }) => ({
                 url: `create-post/`,
                 method: 'POST',
@@ -121,6 +121,16 @@ const api = createApi({
                     'Authorization': `Bearer ${accessToken}`,
                 },
                 body
+            })
+        }),
+        doRepost: builder.mutation<number, any>({
+            query: ({ content, tweet, media, accessToken }) => ({
+                url: `create-retweet/`,
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                },
+                body: { content, tweet, media }
             })
         }),
         filterUser: builder.query<UserProfile[], FilterPostRequest>({
@@ -136,7 +146,7 @@ const api = createApi({
         getUserById: builder.query<UserProfile, number>({
             query: (id) => `users/${id}/`, 
         }),
-        doComment: builder.mutation<any, any>({
+        doComment: builder.mutation<Comment, any>({
             query: ({ content, content_type, object_id, media, accessToken }) => ({
                 url: `comments/`,
                 method: 'POST',
@@ -146,16 +156,6 @@ const api = createApi({
                 body: {
                     content, content_type, object_id, media
                 }
-            })
-        }),
-        doRepost: builder.mutation({
-            query: ({ content, tweet, media, accessToken }) => ({
-                url: `create-retweet/`,
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`
-                },
-                body: { content, tweet, media }
             })
         }),
         addLikeTweet: builder.mutation<any, AddLikeRequest>({

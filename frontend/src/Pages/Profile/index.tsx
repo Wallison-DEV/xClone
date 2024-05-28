@@ -18,6 +18,8 @@ import FollowList from '../../Components/FollowList';
 import Retweet from '../../Components/Retweet';
 import Tweet from '../../Components/Tweet';
 import ProfileForm from '../../Components/ProfileEditForm';
+import Loader from '../../Components/Loader';
+import { Container } from '../../styles';
 
 const Profile = () => {
     const { id } = useParams();
@@ -43,11 +45,11 @@ const Profile = () => {
     const [isFollowingList, setIsFollowingList] = useState(false)
 
     if (UserLoading || PostsLoading) {
-        return <S.Profile><h1>Loading</h1></S.Profile>;
+        return <S.Profile><Loader /></S.Profile>;
     }
 
     if (UserError || PostsError) {
-        return <S.Profile><h1>Ocorreu um erro ao processar perfil, tente novamente</h1></S.Profile>;
+        return <S.Profile><Container><h1>Ocorreu um erro ao processar perfil, tente novamente</h1></Container></S.Profile>;
     }
 
     if (!user || !userPosts) {

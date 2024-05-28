@@ -56,6 +56,7 @@ declare interface Comment {
     content_type: number;
     object_id: number;
     content_object: string;
+    status?: number;
 }
 
 declare type UserProfile = {

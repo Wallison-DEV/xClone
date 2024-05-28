@@ -8,6 +8,7 @@ import { useGetPostByIdQuery, useUpdateRetweetMutation, useUpdateTweetMutation }
 import { Modal } from '../../styles';
 import { LoginDiv } from '../Login/styles';
 import MinimizedTweet from "../MinimizedTweet";
+import ConfirmModal from "../ConfirmModal";
 
 interface PostEditProps {
     post: PostProps | RetweetProps;
@@ -17,6 +18,7 @@ interface PostEditProps {
 const PostEditForm: React.FC<PostEditProps> = ({ post, onClose }) => {
     const accessToken = localStorage.getItem("accessToken") || ''
     const [textPostValue, setTextPostValue] = useState(post.content)
+    const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false)
 
     const [EditTweetPurchase] = useUpdateTweetMutation()
     const [EditRetweetPurchase] = useUpdateRetweetMutation()
@@ -36,9 +38,8 @@ const PostEditForm: React.FC<PostEditProps> = ({ post, onClose }) => {
                 body: formData,
                 accessToken
             });
-            console.log(response)
-            if (response) {
-                close()
+            if ('data' in response && response.data.status == 200) {
+                setIsSuccessModalOpen(true)
             }
         } catch (error: any) {
             console.error('Error editing tweet:', error);
@@ -53,9 +54,8 @@ const PostEditForm: React.FC<PostEditProps> = ({ post, onClose }) => {
                 body: formData,
                 accessToken
             });
-            console.log(response)
-            if (response) {
-                close()
+            if ('data' in response && response.data.status == 200) {
+                setIsSuccessModalOpen(true)
             }
         } catch (error: any) {
             console.error('Error editing retweet:', error);
@@ -108,6 +108,9 @@ const PostEditForm: React.FC<PostEditProps> = ({ post, onClose }) => {
                     </div>
                 </PostForm>
             </LoginDiv>
+            {isSuccessModalOpen && (
+                <ConfirmModal text='Post atualizado com sucesso' onClose={() => { setIsSuccessModalOpen(false); close() }} />
+            )}
             <div className="overlay" onClick={() => close()}></div>
         </Modal>
     )

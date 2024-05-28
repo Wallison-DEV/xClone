@@ -22,8 +22,10 @@ class CommentViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.validated_data['user'] = request.user
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            comment = serializer.save()
+            serialized_comment = CommentSerializer(comment).data 
+            serialized_comment['status'] = status.HTTP_201_CREATED
+            return Response(serialized_comment)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -50,7 +52,7 @@ class PostViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save(user=request.user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response( status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     @action(detail=False, methods=['patch'], permission_classes=[IsAuthenticated])
@@ -62,7 +64,7 @@ class PostViewSet(viewsets.ModelViewSet):
                 serializer = self.get_serializer(tweet, data=request.data, partial=True)
                 if serializer.is_valid(raise_exception=True):
                     serializer.save()
-                    return Response(serializer.data, status=status.HTTP_200_OK)
+                    return Response({'tweet':serializer.data, 'status':status.HTTP_200_OK})
                 else:
                     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             else:
@@ -139,7 +141,7 @@ class RetweetViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             serializer.validated_data['user'] = request.user
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     @action(detail=False, methods=['patch'], permission_classes=[IsAuthenticated])
@@ -151,7 +153,7 @@ class RetweetViewSet(viewsets.ModelViewSet):
                 serializer = self.get_serializer(retweet, data=request.data, partial=True)
                 if serializer.is_valid(raise_exception=True):
                     serializer.save()
-                    return Response(serializer.data, status=status.HTTP_200_OK)
+                    return Response({'retweet':serializer.data, 'status':status.HTTP_200_OK})
                 else:
                     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             else:
@@ -276,4 +278,4 @@ class CombinedPostViewSet(viewsets.ViewSet):
             reverse=True
         )
         serializer = CombinedPostSerializer(combined_user_posts, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)

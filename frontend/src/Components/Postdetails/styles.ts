@@ -26,6 +26,8 @@ export const CommentsSection =styled.div`
 export const StyledPostDetails = styled.div`
     width: 100%;
     padding: 8px;
+    overflow-y: auto;
+
     ${PostContainer}{
         margin-top: 32px;
     }

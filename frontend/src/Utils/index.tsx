@@ -77,7 +77,6 @@ const validateToken = async (accessToken: any) => {
             },
         });
         if (response.status == 200) {
-            console.log('Token is valid:', response);
             return true;
         } else {
             console.error('Failed to validate token');

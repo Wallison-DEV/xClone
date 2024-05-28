@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import * as S from '../Postdetails/styles'
 import { StyledHeader } from "../PostList/styles"
@@ -23,7 +23,7 @@ interface PostRetweetProps {
 const PostRetweet: React.FC<PostRetweetProps> = ({ post, onClose }) => {
     const accessToken = localStorage.getItem('accessToken') || ''
     const { data: myProfile } = useGetMyuserQuery(accessToken)
-    const [doRepost, { isError, error, isSuccess }] = useDoRepostMutation();
+    const [doRepost] = useDoRepostMutation();
     const [textRepostValue, setTextRepostValue] = useState('')
     const [sourceRepostValue, setSourceRepostValue] = useState<File | null>(null)
     const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false)
@@ -49,23 +49,18 @@ const PostRetweet: React.FC<PostRetweetProps> = ({ post, onClose }) => {
             const tweet = post.id;
             const accessToken = localStorage.getItem("accessToken") || '';
 
-            await doRepost({
+            const response = await doRepost({
                 content, tweet, media, accessToken,
             });
+            if ('data' in response && response.data === 201) {
+                setSourceRepostValue(null);
+                setTextRepostValue('');
+                setIsSuccessModalOpen(true);
+            }
         } catch (error) {
             console.error('Error making repost:', error);
         }
     };
-    useEffect(() => {
-        if (isError) {
-            console.log("repost error", error);
-        }
-        if (isSuccess) {
-            setSourceRepostValue(null);
-            setTextRepostValue('');
-            setIsSuccessModalOpen(true);
-        }
-    }, [isSuccess, isError, error]);
     return (
         <LoginDiv>
             <S.StyledPostDetails>
@@ -107,7 +102,7 @@ const PostRetweet: React.FC<PostRetweetProps> = ({ post, onClose }) => {
             {isSuccessModalOpen && (
                 <ConfirmModal
                     text='Retweet criado com sucessso!.'
-                    onClose={() => setIsSuccessModalOpen(false)}
+                    onClose={() => { setIsSuccessModalOpen(false); close(); }}
                 />
             )}
         </LoginDiv>

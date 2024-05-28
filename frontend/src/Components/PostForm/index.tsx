@@ -17,7 +17,7 @@ const PostForm = ({ isNotModal }: { isNotModal?: boolean }) => {
     const [textPostValue, setTextPostValue] = useState('')
     const [sourcePostValue, setSourcePostValue] = useState<File | null>(null)
     const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false)
-    const [postMedia, { isSuccess }] = useDoPostMutation()
+    const [postMedia] = useDoPostMutation()
 
     const DoPost = async () => {
         try {
@@ -26,11 +26,12 @@ const PostForm = ({ isNotModal }: { isNotModal?: boolean }) => {
             if (sourcePostValue) {
                 formData.append('media', sourcePostValue);
             }
-            await postMedia({
+            const response = await postMedia({
                 body: formData,
                 accessToken
             });
-            if (isSuccess) {
+            console.log(response)
+            if ('data' in response && response.data === 201) {
                 setSourcePostValue(null);
                 setTextPostValue('');
                 setIsSuccessModalOpen(true);

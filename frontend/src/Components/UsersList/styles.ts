@@ -46,5 +46,18 @@ export const Profile = styled.div`
     &:first-of-type {
         margin-top: 8px;
     }
-
 `
+export const ProfileWrapper = styled.div`
+    position: relative;
+`;
+
+export const FollowButtonWrapper = styled.div`
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+
+    ${ButtonStyle} {
+        display: block;
+    }
+`;
