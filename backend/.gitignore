@@ -1,4 +1,4 @@
 env
 db.sqlite3
-# post_media
-# media
+post_media
+media
