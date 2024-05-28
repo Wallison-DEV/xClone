@@ -156,7 +156,7 @@ export const timePost = (createdAt: string) => {
 };
 
 export const convertUrl = (url: string) => {
-    if (url.startsWith('http://localhost')) {
+    if (url.startsWith('http://localhost:8000/')) {
         return url;
     } else {
         return `http://localhost:8000${url}`;

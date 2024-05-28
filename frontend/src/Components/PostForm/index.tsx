@@ -9,13 +9,15 @@ import Button from "../Button";
 
 import userIcon from '../../assets/img/profile_avatar.png'
 import pictureIcon from '../../assets/icons/pictureIcon.png'
+import ConfirmModal from '../ConfirmModal';
 
 const PostForm = ({ isNotModal }: { isNotModal?: boolean }) => {
     const accessToken = localStorage.getItem('accessToken') || ''
     const { data: myProfile } = useGetMyuserQuery(accessToken)
     const [textPostValue, setTextPostValue] = useState('')
     const [sourcePostValue, setSourcePostValue] = useState<File | null>(null)
-    const [postMedia] = useDoPostMutation()
+    const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false)
+    const [postMedia, { isSuccess }] = useDoPostMutation()
 
     const DoPost = async () => {
         try {
@@ -28,8 +30,11 @@ const PostForm = ({ isNotModal }: { isNotModal?: boolean }) => {
                 body: formData,
                 accessToken
             });
-            setSourcePostValue(null);
-            setTextPostValue('');
+            if (isSuccess) {
+                setSourcePostValue(null);
+                setTextPostValue('');
+                setIsSuccessModalOpen(true);
+            }
         } catch (error: any) {
             console.error('Error making posts:', error);
         }
@@ -77,6 +82,12 @@ const PostForm = ({ isNotModal }: { isNotModal?: boolean }) => {
                     </footer>
                 </div>
             </S.PostForm>
+            {isSuccessModalOpen && (
+                <ConfirmModal
+                    text='Tweet criado com sucessso!.'
+                    onClose={() => setIsSuccessModalOpen(false)}
+                />
+            )}
         </S.PostDiv>
     )
 }

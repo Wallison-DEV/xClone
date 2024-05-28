@@ -31,7 +31,6 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
-    'allauth.socialaccount.providers.apple',
 ]
 
 ACCOUNT_EMAIL_REQUIRED = True
@@ -42,16 +41,9 @@ SOCIALACCOUNT_PROVIDERS = {
         'SCOPE': ['profile', 'email'],
         'AUTH_PARAMS': {'access_type': 'online'},
         'APP': {
-            'client_id': 'YOUR_GOOGLE_CLIENT_ID',
-            'secret': 'YOUR_GOOGLE_CLIENT_SECRET',
-            'key': ''
+            'client_id': '297868879617-6igc8ikt47juhj3p5kkg6agn5t7175bs.apps.googleusercontent.com',
         }
     }, 
-    'apple': {
-        'APP_ID': 'SEU_APP_ID_DA_APPLE',
-        'APP_SECRET': 'SUA_APP_SECRET_DA_APPLE',
-        'REDIRECT_URI': 'URL_DE_RETORNO_PARA_O_SEU_BACKEND',
-    }
 }
 
 REST_FRAMEWORK = {
@@ -85,7 +77,7 @@ AUTH_USER_MODEL = 'accounts.AccountModel'
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
     'https://wallison.pythonanywhere.com',
-    'https://x-clone-frontend-bl8mlc6hp-wallisondevs.vercel.app',
+    'https://x-clone-frontend-neon.vercel.app',
 ]
 
 CORS_ALLOW_METHODS = [
@@ -160,9 +152,6 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'build/static')
-]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 

@@ -14,7 +14,7 @@ export const LoginDiv = styled.div`
     flex-direction: column;
     padding: 16px;
 `
-export const InputDiv = styled.div`
+export const InputDiv = styled.label`
     position: relative;
     width: 100%;
     margin-bottom: 20px; 
@@ -31,13 +31,14 @@ export const InputDiv = styled.div`
         font-size: 13px;
         font-weight: 400;
         color: ${(props)=> props.theme.corDaBorda};
+        cursor: pointer;
     }
     textarea, input {
         outline: none; 
         border: none;
         width: 100%;
-        margin-top: 20px;
         font-size: 17px;
+        margin-top: 20px;
         color: ${(props)=> props.theme.corDoTexto};
         background-color: ${(props)=> props.theme.corDeFundo};
     } 
