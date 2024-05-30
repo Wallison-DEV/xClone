@@ -3,7 +3,7 @@ from django.db import models
 
 class AccountModel(AbstractUser):
     bio = models.TextField(max_length=500, blank=True)
-    arroba = models.TextField(max_length=20, unique=True)
+    arroba = models.TextField(max_length=20, unique=True, default='')
     profile_image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
     background_image = models.ImageField(upload_to='background_images/', blank=True, null=True)
     followers = models.ManyToManyField('self', symmetrical=False, related_name='followers_set', blank=True)
@@ -29,3 +29,8 @@ class AccountModel(AbstractUser):
 
     def __str__(self):
         return self.username
+    
+    def save(self, *args, **kwargs):
+        if not self.arroba:
+            self.arroba = str(self.id)
+        super().save(*args, **kwargs)

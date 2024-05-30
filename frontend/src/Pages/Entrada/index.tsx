@@ -1,9 +1,6 @@
 import { useTheme } from 'styled-components'
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
-// import { GoogleLogin } from '@react-oauth/google';
-
-import googleLogo from '../../assets/icons/google.png'
 import appleLogo from '../../assets/icons/apple-logo.png'
 
 import * as S from './styles'
@@ -22,24 +19,6 @@ const Entrada = ({ checkAuthentication }: { checkAuthentication: () => Promise<v
     const { loginOpen, registerOpen } = useSelector((state: RootReducer) => state.entry);
     const [isAppleOpen, setIsAppleOpen] = useState(false)
     const [isGoogleOpen, setIsGoogleOpen] = useState(false)
-
-    // const handleGoogleSuccess = (credentialResponse: any) => {
-    //     fetch('http://localhost:8000/accounts/auth/register/google', {
-    //         method: 'POST',
-    //         headers: { 'Content-Type': 'application/json' },
-    //         body: JSON.stringify({ token: credentialResponse.credential }),
-    //     }).then(res => {
-    //         if (res.ok) {
-    //             dispatch(openLogin());
-    //             console.log('Registro com Google realizado com sucesso!');
-    //         }
-    //     }).catch(error => {
-    //         console.error('Erro ao registrar-se com Google:', error);
-    //     });
-    // };
-    // const handleGoogleFailure = () => {
-    //     console.error('Google login failed');
-    // };
 
     const openModalApple = () => {
         setIsAppleOpen(true);
@@ -66,10 +45,33 @@ const Entrada = ({ checkAuthentication }: { checkAuthentication: () => Promise<v
                             <G.PrimaryTitle className='margin-24'>Acontecendo agora</G.PrimaryTitle>
                             <G.SecondTitle>Inscreva-se Hoje</G.SecondTitle>
                             <S.InputsDiv>
-                                <Button variant='light' className="margin-24" onClick={openModalGoogle}>
-                                    <img src={googleLogo} alt="" /> Registrar-se com Google
-                                </Button>
-                                {/* <GoogleLogin onSuccess={handleGoogleSuccess} onError={handleGoogleFailure} text='signup_with' /> */}
+                                <S.StyledRegButton
+                                    text="signup_with"
+                                    onSuccess={async (credentialResponse) => {
+                                        try {
+                                            const response = await fetch('http://localhost:8000/accounts/auth/register/google', {
+                                                method: 'POST',
+                                                headers: {
+                                                    'Content-Type': 'application/json',
+                                                },
+                                                body: JSON.stringify({
+                                                    token: credentialResponse.credential,
+                                                }),
+                                            });
+                                            console.log(response)
+                                            if (response.ok) {
+                                                dispatch(openLogin());
+                                            } else {
+                                                console.error('Erro ao registrar-se com Google:', response);
+                                            }
+                                        } catch (error) {
+                                            console.error('Erro ao registrar-se com Google:', error);
+                                        }
+                                    }}
+                                    onError={() => {
+                                        console.log('Login Failed');
+                                    }}
+                                />
                                 <Button variant='light' onClick={openModalApple}>
                                     <img src={appleLogo} alt="" /> Registrar-se com Apple
                                 </Button>

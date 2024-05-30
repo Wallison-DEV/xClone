@@ -1,7 +1,6 @@
 import { useTheme } from 'styled-components';
 import { useDispatch } from 'react-redux';
 import { useCallback, useState } from 'react';
-// import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
 
 import { calculateTimeUntilExpiration, scheduleTokenRefresh } from '../../Utils';
 import { useDoLoginMutation } from '../../Services/api';
@@ -17,7 +16,7 @@ interface LoginRequestBody {
 import * as S from './styles';
 import Button from '../Button';
 
-import { Separador, ListDiv } from '../../Pages/Entrada/styles';
+import { Separador, ListDiv, StyledRegButton } from '../../Pages/Entrada/styles';
 import { Modal, SecondTitle } from '../../styles';
 import { closeModal, openRegister } from '../../Store/reducers/entry';
 import ConfirmModal from '../ConfirmModal';
@@ -66,7 +65,7 @@ const Login = ({ checkAuthentication }: { checkAuthentication: () => Promise<voi
     // const handleGoogleSuccess = useCallback(async (credentialResponse: CredentialResponse) => {
     //     const idToken = credentialResponse.credential;
     //     try {
-    //         const response = await fetch('http://localhost:8000/accounts/auth/login/google', {
+    //         const response = await fetch('https://wallison.pythonanywhere.com/accounts/auth/login/google', {
     //             method: 'POST',
     //             headers: {
     //                 'Content-Type': 'application/json',
@@ -113,10 +112,34 @@ const Login = ({ checkAuthentication }: { checkAuthentication: () => Promise<voi
                     {isEmail ? (
                         <ListDiv>
                             <SecondTitle>Entrar no X</SecondTitle>
-                            <Button variant='light' className="margin-24" onClick={openModalGoogle}>
-                                <img src={googleLogo} alt="" /> Registrar-se com Google
-                            </Button>
-                            {/* <GoogleLogin onSuccess={handleGoogleSuccess} onError={handleGoogleFailure} text='signup_with' /> */}
+                            <StyledRegButton
+                                text="signup_with"
+                                onSuccess={async (credentialResponse) => {
+                                    try {
+                                        const response = await fetch('http://localhost:8000/accounts/auth/google/login', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                            },
+                                            body: JSON.stringify({
+                                                credential: credentialResponse.credential,
+                                                clientId: credentialResponse.clientId,
+                                                select_by: credentialResponse.select_by,
+                                            }),
+                                        });
+                                        console.log(response)
+                                        if (response.ok) {
+                                        } else {
+                                            console.error('Erro ao registrar-se com Google:', response);
+                                        }
+                                    } catch (error) {
+                                        console.error('Erro ao registrar-se com Google:', error);
+                                    }
+                                }}
+                                onError={() => {
+                                    console.log('Login Failed');
+                                }}
+                            />
                             <Button variant='light' onClick={openModalApple}>
                                 <img src={appleLogo} alt="" /> Registrar-se com Apple
                             </Button>

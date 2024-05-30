@@ -1,5 +1,7 @@
 import styled from "styled-components";
 import { Colors, breakpoints } from "../../styles";
+import { ButtonStyle } from "../../Components/Button/styles";
+import { GoogleLogin } from '@react-oauth/google';
 
 export const EntryDiv = styled.div`
     display: grid;
@@ -52,6 +54,28 @@ export const InputsDiv = styled.div`
     max-width: 298px;
     display: flex;
     flex-direction: column;
+`
+
+export const StyledRegButton = styled(GoogleLogin)`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 100%;
+    padding: 8px;
+    height: 38px;
+    border-radius: 25px;
+    color: ${Colors.black};
+    background-color: ${Colors.white};
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    border: solid 1px ${Colors.lightgray};
+
+    &:hover {
+        background-color: #eee;
+    }
 `
 
 export const Separador = styled.div`

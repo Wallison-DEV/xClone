@@ -10,12 +10,14 @@ from django.utils import timezone
 from rest_framework.parsers import JSONParser, MultiPartParser
 from django.db.models import Q
 
-from django.contrib.auth import get_user_model
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.authentication import JWTAuthentication
+from google.auth.transport import requests
+from google.oauth2 import id_token
+from django.http import JsonResponse
+from django.contrib.auth import authenticate, login
+import random
+import string
 
 from .models import AccountModel
-from allauth.socialaccount.models import SocialToken, SocialApp
 
 from .serializers import UserSerializer, CustomTokenObtainPairSerializer, CustomTokenRefreshSerializer
 
@@ -131,42 +133,142 @@ class CustomTokenRefreshView(TokenRefreshView):
     serializer_class = CustomTokenRefreshSerializer
 
 class GoogleAuthView(APIView):
-    authentication_classes = [AllowAny]
+    permission_classes = [AllowAny]
 
     def post(self, request):
         token = request.data.get('token')
+        
+        if request.method == "POST":
+            if not token:
+                return Response({'error': 'Token is required'}, status=status.HTTP_400_BAD_REQUEST)
 
+            try:
+                idinfo = id_token.verify_oauth2_token(
+                    token, requests.Request(), '209545437573-tl5li4kpr58ofi8cegem5o31otoq5b64.apps.googleusercontent.com'
+                )
+                
+                email = idinfo['email']
+                print(email)
+                user = authenticate(request='/api/token', email=email)
+                print('result user:', user)
+                if user is not None:
+                    login(request, user)
+                    return JsonResponse({'success': True})
+                else:
+                    print('usuário não existe')
+                    return JsonResponse({'error': 'User does not exist.'}, status=404)
+            except ValueError as e:
+                print('except:', e)
+                return JsonResponse({'error': 'Invalid token.'}, status=400)
+        else:
+            return JsonResponse({'error': 'Invalid request method.'}, status=405)
+
+class GoogleRegisterView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        token = request.data.get('token')
+        
         if not token:
-            return Response({'error': 'Token is required'}, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({'error': 'Token is required'}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            social_token = SocialToken.objects.get(token=token)
-            social_app = SocialApp.objects.get(provider='google')
-            if social_token.app_id != social_app.pk:
-                raise SocialToken.DoesNotExist
-        except SocialToken.DoesNotExist:
-            return Response({'error': 'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)
-        except SocialApp.DoesNotExist:
-            return Response({'error': 'Google provider not found'}, status=status.HTTP_400_BAD_REQUEST)
+            idinfo = id_token.verify_oauth2_token(
+                token, requests.Request(), '209545437573-tl5li4kpr58ofi8cegem5o31otoq5b64.apps.googleusercontent.com'
+            )
+            
+            email = idinfo['email']
+            name = idinfo.get('name', '').split()[0]
+            if AccountModel.objects.filter(email=email).exists():
+                return JsonResponse({'error': 'User already exists.'}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                arroba = self.generate_unique_arroba()
+                user = AccountModel.objects.create_user(email=email, username=name, arroba=arroba)
+                user.save()
+                user = authenticate(request, email=email)
+                # login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+                return JsonResponse({'success': True})
+        except ValueError as e:
+            print('token inválido', e)
+            return JsonResponse({'error': 'Invalid token.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        google_user_info = social_token.account.extra_data
-        email = google_user_info.get('email')
-        if not email:
-            return Response({'error': 'Email not found in Google account'}, status=status.HTTP_400_BAD_REQUEST)
+    def generate_unique_arroba(self):
+        arroba_length = 10
+        while True:
+            arroba = ''.join(random.choices(string.ascii_letters + string.digits, k=arroba_length))
+            if not AccountModel.objects.filter(arroba=arroba).exists():
+                return arroba
 
-        User = get_user_model()
+import json
+import jwt
+from rest_framework.authtoken.models import Token
+from jwt.exceptions import PyJWTError
+from rest_framework.authentication import SessionAuthentication
+from django.contrib.auth import get_user_model
+
+class GoogleSignInView(APIView):
+    authentication_classes = []
+    permission_classes = [AllowAny]
+    def validate_and_decode_jwt(self, credential):
         try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
-            username = google_user_info.get('username')
-            arroba = username if username else email.split('@')[0]
-            user = User.objects.create_user(email=email, username=username, arroba=arroba)
+            # Replace 'your_google_client_secret' with your actual Google Client Secret
+            decoded_token = jwt.decode(
+            credential,
+            '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', # your_google_client_secret
+            algorithms=['RS256'],
+            options={"verify_signature": False}  # Add this line to disable signature verification temporarily
+            )
 
-        refresh = RefreshToken.for_user(user)
-        access_token = refresh.access_token
-        exp = access_token['exp']
-        return Response({
-            'access': str(access_token),
-            'refresh': str(refresh),
-            'exp': exp
-        }, status=status.HTTP_200_OK)
+            return decoded_token
+        except PyJWTError as e:
+            # Handle JWT validation error
+            print(f'JWT validation error: {e}')
+            return None
+
+    def post(self, request, *args, **kwargs):
+        data = json.loads(request.body.decode('utf-8'))
+
+        # Extract relevant information
+        credential = data.get('credential')
+        client_id = data.get('clientId')
+        select_by = data.get('select_by')
+
+        decoded_token = self.validate_and_decode_jwt(credential)
+
+        if not decoded_token:
+            # If JWT validation fails, respond with an error
+            return JsonResponse({'error': 'Invalid JWT'}, status=400)
+
+        # Extract user information from the decoded token
+        user_email = decoded_token.get('email')
+        user_first_name = decoded_token.get('given_name')
+        user_last_name = decoded_token.get('family_name')
+
+        # Check if the user already exists in your system
+        try:
+            user = get_user_model().objects.get(email=user_email)
+        except get_user_model().DoesNotExist:
+            # If the user doesn't exist, create a new user
+            user = get_user_model().objects.create_user(email=user_email)
+
+        # Set user fields provided by Google
+        user.first_name = user_first_name
+        user.last_name = user_last_name
+        user.is_verified = True  # Assuming Google verifies users
+
+        # Set social authentication fields
+        user.social_provider = 'google'
+        user.social_uid = decoded_token.get('sub')  # Use the appropriate field from the Google token
+        user.social_extra_data = {'google': decoded_token}  # Store additional data if needed
+
+        # Save the user
+        user.save()
+
+        # Log the user in
+        login(request, user)
+
+        # Generate or retrieve the authentication token
+        token, created = Token.objects.get_or_create(user=user)
+
+        # Example: Respond with a success message and the authentication token
+        return JsonResponse({'message': 'Google Sign-In successful!', 'token': token.key})

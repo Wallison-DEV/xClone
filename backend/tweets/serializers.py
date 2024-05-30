@@ -1,11 +1,6 @@
 from rest_framework import serializers
-from django.contrib.contenttypes.fields import GenericRelation
-from django.contrib.contenttypes.models import ContentType
 
 from .models import PostModel, CommentModel, RetweetModel
-from accounts.models import AccountModel
-
-from django.contrib.auth import get_user_model
 
 class CommentSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
