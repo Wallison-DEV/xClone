@@ -144,7 +144,7 @@ class GoogleAuthView(APIView):
 
             try:
                 idinfo = id_token.verify_oauth2_token(
-                    token, requests.Request(), '209545437573-tl5li4kpr58ofi8cegem5o31otoq5b64.apps.googleusercontent.com'
+                    token, requests.Request(), ''
                 )
                 
                 email = idinfo['email']
@@ -174,7 +174,7 @@ class GoogleRegisterView(APIView):
 
         try:
             idinfo = id_token.verify_oauth2_token(
-                token, requests.Request(), '209545437573-tl5li4kpr58ofi8cegem5o31otoq5b64.apps.googleusercontent.com'
+                token, requests.Request(), ''
             )
             
             email = idinfo['email']
@@ -214,7 +214,6 @@ class GoogleSignInView(APIView):
             # Replace 'your_google_client_secret' with your actual Google Client Secret
             decoded_token = jwt.decode(
             credential,
-            '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', # your_google_client_secret
             algorithms=['RS256'],
             options={"verify_signature": False}  # Add this line to disable signature verification temporarily
             )

@@ -172,11 +172,7 @@ SOCIALACCOUNT_PROVIDERS = {
         'AUTH_PARAMS': {
             'access_type': 'online',
         },
-        'APP': {
-            'client_id': '',
-            'secret': '',
-            'key': '',
-        },
+        
         'OAUTH_PKCE_ENABLED': True,
     }
 }
