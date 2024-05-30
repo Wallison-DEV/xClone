@@ -9,7 +9,6 @@ SECRET_KEY = "django-insecure-mrj*me#@=7)0aj@lh)1*0$9#0s5dud+2iebge=zi-(rhiz17!b
 DEBUG = True
 
 SITE_ID = 1
-SITE_ID = 1
 
 ALLOWED_HOSTS = ['wallison.pythonanywhere.com', 'localhost', '127.0.0.1', 'x-clone-backend-cyan.vercel.app']
 
@@ -33,6 +32,8 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+    
+    'rest_framework.authtoken'
 ]
 
 ACCOUNT_EMAIL_REQUIRED = True
@@ -173,7 +174,11 @@ SOCIALACCOUNT_PROVIDERS = {
         'AUTH_PARAMS': {
             'access_type': 'online',
         },
-        
+        'APP': {
+            'client_id': '209545437573-tl5li4kpr58ofi8cegem5o31otoq5b64.apps.googleusercontent.com',
+            'secret': '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',
+            'key': '',
+        },
         'OAUTH_PKCE_ENABLED': True,
     }
 }

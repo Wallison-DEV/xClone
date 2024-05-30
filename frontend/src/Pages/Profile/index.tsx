@@ -86,6 +86,8 @@ const Profile = () => {
         dispatch(openModalEditProfile())
     }
 
+    console.log('profile', user)
+
     return (
         <S.Profile>
             <div>

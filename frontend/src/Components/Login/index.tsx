@@ -1,11 +1,11 @@
 import { useTheme } from 'styled-components';
 import { useDispatch } from 'react-redux';
 import { useCallback, useState } from 'react';
+import { CredentialResponse } from '@react-oauth/google';
 
 import { calculateTimeUntilExpiration, scheduleTokenRefresh } from '../../Utils';
 import { useDoLoginMutation } from '../../Services/api';
 
-import googleLogo from '../../assets/icons/google.png'
 import appleLogo from '../../assets/icons/apple-logo.png'
 
 interface LoginRequestBody {
@@ -31,13 +31,42 @@ const Login = ({ checkAuthentication }: { checkAuthentication: () => Promise<voi
     const dispatch = useDispatch();
 
     const [isAppleOpen, setIsAppleOpen] = useState(false)
-    const [isGoogleOpen, setIsGoogleOpen] = useState(false)
 
     const openModalApple = () => {
         setIsAppleOpen(true);
     };
-    const openModalGoogle = () => {
-        setIsGoogleOpen(true);
+
+    const handleGoogleLogin = async (credentialResponse: CredentialResponse) => {
+        try {
+            const response = await fetch('https://wallison.pythonanywhere.com/accounts/auth/google/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    credential: credentialResponse.credential,
+                    clientId: credentialResponse.clientId,
+                    select_by: credentialResponse.select_by,
+                }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                const { access: accessToken, exp: tokenExp, refresh: refreshToken } = data;
+                localStorage.setItem('accessToken', accessToken);
+                localStorage.setItem('accessTokenExp', tokenExp.toString());
+                localStorage.setItem('refreshToken', refreshToken);
+                const timeUntilExpiration = calculateTimeUntilExpiration(tokenExp);
+                scheduleTokenRefresh(timeUntilExpiration, refreshToken, dispatch, 0);
+                await checkAuthentication();
+            } else {
+                console.error('Erro ao fazer login com o Google:', response);
+                setErrorMessage('Falha ao fazer login com o Google. Por favor, tente novamente mais tarde.');
+            }
+        } catch (error) {
+            console.error('Erro ao fazer login com o Google:', error);
+            setErrorMessage('Falha ao fazer login com o Google. Por favor, tente novamente mais tarde.');
+        }
     };
 
     const handleLogin = useCallback(async () => {
@@ -62,38 +91,6 @@ const Login = ({ checkAuthentication }: { checkAuthentication: () => Promise<voi
         }
     }, [purchase, dispatch, usernameOrEmail, password]);
 
-    // const handleGoogleSuccess = useCallback(async (credentialResponse: CredentialResponse) => {
-    //     const idToken = credentialResponse.credential;
-    //     try {
-    //         const response = await fetch('https://wallison.pythonanywhere.com/accounts/auth/login/google', {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //             },
-    //             body: JSON.stringify({ token: idToken }),
-    //         });
-    //         if (!response.ok) {
-    //             console.error('Error logging in with Google:', response.statusText);
-    //             setErrorMessage('Falha ao fazer login com Google. Tente novamente.');
-    //             return;
-    //         }
-    //         const responseData = await response.json();
-    //         const { access: accessToken, exp: tokenExp, refresh: refreshToken } = responseData;
-    //         localStorage.setItem('accessToken', accessToken);
-    //         localStorage.setItem('accessTokenExp', tokenExp.toString());
-    //         localStorage.setItem('refreshToken', refreshToken);
-    //         await checkAuthentication();
-    //     } catch (error) {
-    //         console.error('Error logging in with Google:', error);
-    //         setErrorMessage('Falha ao fazer login com Google. Tente novamente.');
-    //     }
-    // }, [checkAuthentication]);
-
-    // const handleGoogleFailure = () => {
-    //     console.error('Google login failed');
-    //     setErrorMessage('Falha na autenticação com Google.');
-    // };
-
     const handleSubmit = (event: { preventDefault: () => void; }) => {
         event.preventDefault();
         handleLogin();
@@ -114,28 +111,7 @@ const Login = ({ checkAuthentication }: { checkAuthentication: () => Promise<voi
                             <SecondTitle>Entrar no X</SecondTitle>
                             <StyledRegButton
                                 text="signup_with"
-                                onSuccess={async (credentialResponse) => {
-                                    try {
-                                        const response = await fetch('http://localhost:8000/accounts/auth/google/login', {
-                                            method: 'POST',
-                                            headers: {
-                                                'Content-Type': 'application/json',
-                                            },
-                                            body: JSON.stringify({
-                                                credential: credentialResponse.credential,
-                                                clientId: credentialResponse.clientId,
-                                                select_by: credentialResponse.select_by,
-                                            }),
-                                        });
-                                        console.log(response)
-                                        if (response.ok) {
-                                        } else {
-                                            console.error('Erro ao registrar-se com Google:', response);
-                                        }
-                                    } catch (error) {
-                                        console.error('Erro ao registrar-se com Google:', error);
-                                    }
-                                }}
+                                onSuccess={handleGoogleLogin}
                                 onError={() => {
                                     console.log('Login Failed');
                                 }}
@@ -178,12 +154,6 @@ const Login = ({ checkAuthentication }: { checkAuthentication: () => Promise<voi
                 <ConfirmModal
                     text='Desculpe, o login com Apple não está disponível no momento. Por favor, escolha outra forma de acesso.'
                     onClose={() => setIsAppleOpen(false)}
-                />
-            )}
-            {isGoogleOpen && (
-                <ConfirmModal
-                    text='Desculpe, o login com Google não está disponível no momento. Por favor, escolha outra forma de acesso.'
-                    onClose={() => setIsGoogleOpen(false)}
                 />
             )}
             <div className='overlay' onClick={close} />

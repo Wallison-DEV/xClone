@@ -1,7 +1,7 @@
 from django.urls import path
 from rest_framework_simplejwt.views import   TokenBlacklistView
 
-from .views import GoogleSignInView , AccountModelViewSet, CustomTokenObtainPairView, TokenValidateView, CustomTokenRefreshView, GoogleAuthView, GoogleRegisterView
+from .views import GoogleSignInView , AccountModelViewSet, CustomTokenObtainPairView, TokenValidateView, CustomTokenRefreshView, GoogleRegisterView
 
 urlpatterns = [
     path('api/token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
