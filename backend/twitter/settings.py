@@ -173,8 +173,8 @@ SOCIALACCOUNT_PROVIDERS = {
             'access_type': 'online',
         },
         'APP': {
-            'client_id': '209545437573-tl5li4kpr58ofi8cegem5o31otoq5b64.apps.googleusercontent.com',
-            'secret': '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',
+            'client_id': '',
+            'secret': '',
             'key': '',
         },
         'OAUTH_PKCE_ENABLED': True,
