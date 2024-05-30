@@ -1,11 +1,7 @@
-from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth import authenticate
 from rest_framework import serializers
-from django.utils import timezone
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
-
-from django.utils import timezone
 
 from .models import AccountModel
 

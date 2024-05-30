@@ -10,12 +10,17 @@ from django.utils import timezone
 from rest_framework.parsers import JSONParser, MultiPartParser
 from django.db.models import Q
 
+from django.http import JsonResponse
+from django.contrib.auth import authenticate, login
+import json
+import jwt
+from rest_framework.authtoken.models import Token
+from jwt.exceptions import PyJWTError
 from django.contrib.auth import get_user_model
+
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from .models import AccountModel
-from allauth.socialaccount.models import SocialToken, SocialApp
 
 from .serializers import UserSerializer, CustomTokenObtainPairSerializer, CustomTokenRefreshSerializer
 
@@ -125,48 +130,99 @@ class TokenValidateView(APIView):
             UntypedToken(token)  
             return Response({'message': 'Token is valid'}, status=status.HTTP_200_OK)
         except TokenError as e:
+            print('erro:',e)
             return Response({'error': 'Invalid token', 'details': str(e)}, status=status.HTTP_401_UNAUTHORIZED)
 
 class CustomTokenRefreshView(TokenRefreshView):
     serializer_class = CustomTokenRefreshSerializer
 
-class GoogleAuthView(APIView):
-    authentication_classes = [AllowAny]
+class GoogleRegisterView(APIView):
+    permission_classes = [AllowAny]
+    
+    def validate_and_decode_jwt(self, credential):
+        try:
+            decoded_token = jwt.decode(
+                credential,
+                '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', 
+                algorithms=['RS256'],
+                options={"verify_signature": False} 
+            )
+            return decoded_token
+        except PyJWTError as e:
+            print(f'JWT validation error: {e}')
+            return None
 
-    def post(self, request):
-        token = request.data.get('token')
+    def post(self, request, *args, **kwargs):
+        data = json.loads(request.body.decode('utf-8'))
+        credential = data.get('credential')
 
-        if not token:
-            return Response({'error': 'Token is required'}, status=status.HTTP_400_BAD_REQUEST)
+        decoded_token = self.validate_and_decode_jwt(credential)
+
+        if not decoded_token:
+            return JsonResponse({'error': 'Invalid JWT'}, status=400)
+
+        user_email = decoded_token.get('email')
+        user_first_name = decoded_token.get('given_name')
+        user_last_name = decoded_token.get('family_name')
+        
+        try:
+            user = get_user_model().objects.get(email=user_email)
+            return JsonResponse({'message': 'User already exists'}, status=status.HTTP_409_CONFLICT)
+        except get_user_model().DoesNotExist:
+            pass 
+
+        user, created = get_user_model().objects.get_or_create(email=user_email)
+
+        if created:
+            user.first_name = user_first_name
+            user.last_name = user_last_name
+            user.is_verified = True  
+            user.social_provider = 'google'
+            user.social_uid = decoded_token.get('sub') 
+            user.social_extra_data = {'google': decoded_token}  
+            user.save()
+
+        return JsonResponse({'message': 'User registered successfully'}, status=201)
+
+class GoogleSignInView(APIView):
+    permission_classes = [AllowAny]
+    
+    def validate_and_decode_jwt(self, credential):
+        try:
+            decoded_token = jwt.decode(
+                credential,
+                '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', 
+                algorithms=['RS256'],
+                options={"verify_signature": False} 
+            )
+            return decoded_token
+        except PyJWTError as e:
+            print(f'JWT validation error: {e}')
+            return None
+
+    def post(self, request, *args, **kwargs):
+        data = json.loads(request.body.decode('utf-8'))
+        credential = data.get('credential')
+
+        decoded_token = self.validate_and_decode_jwt(credential)
+
+        if not decoded_token:
+            return JsonResponse({'error': 'Invalid JWT'}, status=400)
+
+        user_email = decoded_token.get('email')
 
         try:
-            social_token = SocialToken.objects.get(token=token)
-            social_app = SocialApp.objects.get(provider='google')
-            if social_token.app_id != social_app.pk:
-                raise SocialToken.DoesNotExist
-        except SocialToken.DoesNotExist:
-            return Response({'error': 'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)
-        except SocialApp.DoesNotExist:
-            return Response({'error': 'Google provider not found'}, status=status.HTTP_400_BAD_REQUEST)
+            user = get_user_model().objects.get(email=user_email)
+        except get_user_model().DoesNotExist:
+            return JsonResponse({'error': 'User does not exist'}, status=404)
 
-        google_user_info = social_token.account.extra_data
-        email = google_user_info.get('email')
-        if not email:
-            return Response({'error': 'Email not found in Google account'}, status=status.HTTP_400_BAD_REQUEST)
-
-        User = get_user_model()
-        try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
-            username = google_user_info.get('username')
-            arroba = username if username else email.split('@')[0]
-            user = User.objects.create_user(email=email, username=username, arroba=arroba)
+        login(request, user, backend='django.contrib.auth.backends.ModelBackend')
 
         refresh = RefreshToken.for_user(user)
         access_token = refresh.access_token
-        exp = access_token['exp']
-        return Response({
-            'access': str(access_token),
+        
+        return JsonResponse({
             'refresh': str(refresh),
-            'exp': exp
-        }, status=status.HTTP_200_OK)
+            'access': str(access_token),
+            'exp': access_token['exp'], 
+        })

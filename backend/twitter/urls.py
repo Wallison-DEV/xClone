@@ -16,10 +16,10 @@ router.register(r'combined', CombinedPostViewSet, basename='combined')
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path('', include(router.urls)),
+    path("", include(router.urls)),
     path("", include('accounts.urls')),
     path("", include('tweets.urls')),
-    path('accounts/', include('allauth.urls')),
+    path("accounts/", include('allauth.urls')),
 ] 
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import PostViewSet, CommentViewSet, RetweetViewSet, CombinedPostViewSet
+from .views import PostViewSet, RetweetViewSet, CombinedPostViewSet
 
 urlpatterns = [
     path('followed-feed/', CombinedPostViewSet.as_view({'get': 'followed_feed'}), name='followed-feed'),

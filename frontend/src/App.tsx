@@ -20,7 +20,7 @@ function App() {
   return (
     <ThemeProvider theme={estaUsandoTemaDark ? TemaDark : TemaLight}>
       <Provider store={store}>
-        <GoogleOAuthProvider clientId='297868879617-6igc8ikt47juhj3p5kkg6agn5t7175bs.apps.googleusercontent.com'>
+        <GoogleOAuthProvider clientId='209545437573-tl5li4kpr58ofi8cegem5o31otoq5b64.apps.googleusercontent.com'>
           <BrowserRouter>
             <EstiloGlobal />
             <Rotas isDarkTheme={estaUsandoTemaDark} togleTheme={togleTheme} />

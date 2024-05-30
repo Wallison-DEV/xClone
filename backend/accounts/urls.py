@@ -1,7 +1,7 @@
 from django.urls import path
 from rest_framework_simplejwt.views import   TokenBlacklistView
 
-from .views import AccountModelViewSet, CustomTokenObtainPairView, TokenValidateView, CustomTokenRefreshView, GoogleAuthView
+from .views import GoogleSignInView , AccountModelViewSet, CustomTokenObtainPairView, TokenValidateView, CustomTokenRefreshView, GoogleRegisterView
 
 urlpatterns = [
     path('api/token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
@@ -13,6 +13,6 @@ urlpatterns = [
     path('users/<int:pk>/follow/', AccountModelViewSet.as_view({'post': 'follow'}), name='follow_user'),
     path('users/<int:pk>/unfollow/', AccountModelViewSet.as_view({'post': 'unfollow'}), name='unfollow_user'),
     path('update-profile/', AccountModelViewSet.as_view({'patch': 'update_profile'}), name='update_profile'),
-    path('accounts/auth/register/google', GoogleAuthView.as_view(), name='google_register'),
-    path('accounts/auth/login/google', GoogleAuthView.as_view(), name='google_login'),
+    path('accounts/auth/register/google', GoogleRegisterView.as_view(), name='google_register'),
+    path('accounts/auth/google/login', GoogleSignInView.as_view(), name='google_login'),
 ]

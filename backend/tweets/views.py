@@ -6,8 +6,6 @@ from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from itertools import chain
 
-from rest_framework.views import APIView
-
 from .serializers import PostSerializer, CommentSerializer, RetweetSerializer, CombinedPostSerializer
 from .models import PostModel, CommentModel, RetweetModel
 
