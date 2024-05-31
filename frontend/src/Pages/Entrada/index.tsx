@@ -2,7 +2,7 @@ import { useTheme } from 'styled-components'
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import appleLogo from '../../assets/icons/apple-logo.png'
-import { CredentialResponse } from '@react-oauth/google';
+import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
 
 import * as S from './styles'
 import * as G from '../../styles'
@@ -77,13 +77,18 @@ const Entrada = ({ checkAuthentication }: { checkAuthentication: () => Promise<v
                             <G.PrimaryTitle className='margin-24'>Acontecendo agora</G.PrimaryTitle>
                             <G.SecondTitle>Inscreva-se Hoje</G.SecondTitle>
                             <S.InputsDiv>
-                                <S.StyledRegButton
-                                    text="signup_with"
-                                    onSuccess={handleGoogleSignup}
-                                    onError={() => {
-                                        console.log('Login Failed');
-                                    }}
-                                />
+                                <div className='margin-24'>
+                                    <GoogleLogin
+                                        logo_alignment='center'
+                                        text='signup_with'
+                                        width='298px'
+                                        shape='pill'
+                                        onSuccess={handleGoogleSignup}
+                                        onError={() => {
+                                            console.log('Login Failed');
+                                        }}
+                                    />
+                                </div>
                                 <Button variant='light' onClick={openModalApple}>
                                     <img src={appleLogo} alt="" /> Registrar-se com Apple
                                 </Button>

@@ -11,7 +11,6 @@ import { RiSunFill, RiMoonFill } from 'react-icons/ri';
 
 import { useGetMyuserQuery } from "../../Services/api";
 import { clearFollowed, updateMyUser } from "../../Store/reducers/profile";
-import { falseValidate } from "../../Store/reducers/entry";
 
 import PostForm from "../PostForm";
 import Button from '../Button'
