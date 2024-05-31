@@ -1,7 +1,7 @@
 import { useTheme } from 'styled-components';
 import { useDispatch } from 'react-redux';
 import { useCallback, useState } from 'react';
-import { CredentialResponse } from '@react-oauth/google';
+import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
 
 import { calculateTimeUntilExpiration, scheduleTokenRefresh } from '../../Utils';
 import { useDoLoginMutation } from '../../Services/api';
@@ -16,7 +16,7 @@ interface LoginRequestBody {
 import * as S from './styles';
 import Button from '../Button';
 
-import { Separador, ListDiv, StyledRegButton } from '../../Pages/Entrada/styles';
+import { Separador, ListDiv } from '../../Pages/Entrada/styles';
 import { Modal, SecondTitle } from '../../styles';
 import { closeModal, openRegister } from '../../Store/reducers/entry';
 import ConfirmModal from '../ConfirmModal';
@@ -37,11 +37,12 @@ const Login = ({ checkAuthentication }: { checkAuthentication: () => Promise<voi
     };
 
     const handleGoogleLogin = async (credentialResponse: CredentialResponse) => {
+        console.log(credentialResponse)
         try {
             const response = await fetch('https://wallison.pythonanywhere.com/accounts/auth/google/login', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     credential: credentialResponse.credential,
@@ -109,15 +110,20 @@ const Login = ({ checkAuthentication }: { checkAuthentication: () => Promise<voi
                     {isEmail ? (
                         <ListDiv>
                             <SecondTitle>Entrar no X</SecondTitle>
-                            <StyledRegButton
-                                text="signup_with"
-                                onSuccess={handleGoogleLogin}
-                                onError={() => {
-                                    console.log('Login Failed');
-                                }}
-                            />
+                            <div className='margin-24' >
+                                <GoogleLogin
+                                    logo_alignment='center'
+                                    text='signin_with'
+                                    width='298px'
+                                    shape='pill'
+                                    onSuccess={handleGoogleLogin}
+                                    onError={() => {
+                                        console.log('Login Failed');
+                                    }}
+                                />
+                            </div>
                             <Button variant='light' onClick={openModalApple}>
-                                <img src={appleLogo} alt="" /> Registrar-se com Apple
+                                <img src={appleLogo} alt="" /> Fazer login com Apple
                             </Button>
                             <Separador>ou</Separador>
                             <S.InputDiv>
@@ -150,14 +156,16 @@ const Login = ({ checkAuthentication }: { checkAuthentication: () => Promise<voi
                     )}
                 </S.StyledForm>
             </S.LoginDiv>
-            {isAppleOpen && (
-                <ConfirmModal
-                    text='Desculpe, o login com Apple não está disponível no momento. Por favor, escolha outra forma de acesso.'
-                    onClose={() => setIsAppleOpen(false)}
-                />
-            )}
+            {
+                isAppleOpen && (
+                    <ConfirmModal
+                        text='Desculpe, o login com Apple não está disponível no momento. Por favor, escolha outra forma de acesso.'
+                        onClose={() => setIsAppleOpen(false)}
+                    />
+                )
+            }
             <div className='overlay' onClick={close} />
-        </Modal>
+        </Modal >
     )
 }
 
