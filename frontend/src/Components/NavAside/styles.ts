@@ -100,6 +100,7 @@ export const LeftAside = styled.aside`
         }
     }
     @media( max-width: ${breakpoints.tablet}){
+        background:${(props)=> props.theme.corDeFundo};
         position: fixed;
         display: flex;
         align-items: center;

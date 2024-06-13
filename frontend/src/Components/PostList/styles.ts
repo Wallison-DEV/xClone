@@ -7,6 +7,18 @@ export const PostContainer = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+    @media ( max-width: ${breakpoints.tablet}){
+        margin-bottom: 72px;
+        width: 100%;
+        min-width: 100%;
+    }
+`
+
+export const PostList= styled.div`
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     >div {
         width: 100%;
     }
@@ -16,6 +28,7 @@ export const PostContainer = styled.div`
         min-width: 100%;
     }
 `
+
 export const StyledHeader = styled.header`
     display: grid;
     grid-template-columns: 1fr 1fr;

@@ -40,7 +40,7 @@ const PostList = () => {
                 <button onClick={() => setTypePostsAll(true)} className={typePostsAll === true ? 'is-selected' : ''}><p>Para você</p></button>
             </S.StyledHeader>
             <PostForm isNotModal={true} />
-            <div>
+            <S.PostList>
                 {isLoadingFollowedPosts || isLoadingSuggestedPosts ? (
                     <Loader />
                 ) : (
@@ -58,7 +58,7 @@ const PostList = () => {
                         }
                     </>
                 )}
-            </div>
+            </S.PostList>
         </ S.PostContainer>
     )
 }

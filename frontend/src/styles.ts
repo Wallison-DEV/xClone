@@ -55,7 +55,7 @@ export const EstiloGlobal = createGlobalStyle`
         justify-content: center;
 
         @media (max-width: ${breakpoints.desktop}) {
-        max-width: 80%;
+            max-width: 80%;
         }
     }
     .margin-24 {
@@ -82,7 +82,6 @@ export const Container = styled.div`
     max-width: 1310px;
     justify-content: center;
     margin: 0 auto;
-
 `;
 
 export const PrimaryTitle = styled.h1`

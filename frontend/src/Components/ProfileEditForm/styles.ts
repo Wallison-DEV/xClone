@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 import { InputDiv, LoginDiv } from "../Login/styles";
-import { SecondTitle } from "../../styles";
+import { SecondTitle, breakpoints } from "../../styles";
 import { ButtonStyle } from "../Button/styles";
 import { convertUrl } from "../../Utils";
 
@@ -31,6 +31,10 @@ export const ProfileModal = styled(LoginDiv)`
         position: absolute;
         bottom: 16px;
         width: calc(100% - 64px);
+    }
+
+    @media (max-width: ${breakpoints.desktop}){
+        margin-bottom: 40px;
     }
 `
 export const BackgroundImg = styled.div<BackgroundImgProps>`

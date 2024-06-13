@@ -12,11 +12,3 @@ const TemaDark = {
 }
 
 export default TemaDark
-
-export type Theme = {
-    corPrincipal: string
-    corSecundaria: string
-    corDeFundo: string
-    corDeFundoBotao: string
-    corDaBorda: string
-}
