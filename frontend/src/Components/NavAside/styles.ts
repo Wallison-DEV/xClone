@@ -138,7 +138,6 @@ export const LeftAside = styled.aside`
 
 export const ProfileDiv = styled.div`
     margin-top: auto;
-    margin-bottom: 24px;
     position: relative;
 
     @media(max-width: ${breakpoints.desktop}){

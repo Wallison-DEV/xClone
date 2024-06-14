@@ -44,6 +44,7 @@ export const EstiloGlobal = createGlobalStyle`
 
     body {
         background: ${(props)=> props.theme.corDeFundo};
+        overflow-y: hidden;
     }
 
     .container { 
@@ -78,7 +79,6 @@ export const EstiloGlobal = createGlobalStyle`
 
 export const Container = styled.div`
     display: flex;
-    height: 100%;
     max-width: 1310px;
     justify-content: center;
     margin: 0 auto;

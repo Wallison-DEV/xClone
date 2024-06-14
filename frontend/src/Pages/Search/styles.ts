@@ -6,6 +6,7 @@ export const SearchContainer = styled.div`
     flex-direction: column;
     width: 600px;
     padding: 12px;
+    overflow-y: auto;
 
     @media ( max-width: ${breakpoints.tablet}){
         margin-bottom: 72px;
@@ -22,3 +23,12 @@ export const SearchContainer = styled.div`
         margin-bottom: 12px;
     }
 `
+export const ResultsContainer = styled.div`
+    overflow-y: auto;
+    max-height: calc(100vh - 120px); 
+    margin-right: 8px;
+    
+    @media (max-width: ${breakpoints.tablet}){
+        max-height: calc(100vh - 180px); 
+    }
+`;
