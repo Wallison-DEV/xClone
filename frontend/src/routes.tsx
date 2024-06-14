@@ -54,15 +54,13 @@ const Rotas = ({ togleTheme, isDarkTheme }: RotasProps) => {
             {isAuthenticated && (
                 <Container>
                     <NavAside checkAuthentication={checkAuthentication} isDarkTheme={isDarkTheme} togleTheme={togleTheme} />
-                    < >
-                        <Routes>
-                            <Route path="/home" element={<Home />} />
-                            <Route path="/profile/:id" element={<Profile />} />
-                            <Route path="/post/:id" element={<Post />} />
-                            <Route path="/search" element={<Search />} />
-                            <Route path="*" element={<Navigate to="/home" />} />
-                        </Routes>
-                    </>
+                    <Routes>
+                        <Route path="/home" element={<Home />} />
+                        <Route path="/profile/:id" element={<Profile />} />
+                        <Route path="/post/:id" element={<Post />} />
+                        <Route path="/search" element={<Search />} />
+                        <Route path="*" element={<Navigate to="/home" />} />
+                    </Routes>
                     <ProfileAside />
                 </Container>
             )}

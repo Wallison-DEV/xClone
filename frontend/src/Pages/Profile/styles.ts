@@ -4,6 +4,9 @@ import {  breakpoints } from "../../styles";
 
 export const Profile = styled.div`
     width: 600px;
+    overflow-y: auto;
+    max-height: 100vh;
+    overflow-x: hidden;
 
     @media ( max-width: ${breakpoints.tablet}){
         width: 100%;

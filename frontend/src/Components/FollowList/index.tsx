@@ -24,7 +24,7 @@ const FollowList: React.FC<Props> = ({ followersUser, followingsUser, type }) =>
 
     return (
         <Modal>
-            <LoginDiv>
+            <LoginDiv >
                 <StyledHeader>
                     <span className='close-span' onClick={close}>x</span>
                     <button onClick={() => setTypeFollowing(false)} className={!typeFollowing ? "is-selected" : ""}>
@@ -37,16 +37,19 @@ const FollowList: React.FC<Props> = ({ followersUser, followingsUser, type }) =>
                 {typeFollowing ? (
                     <>
                         {followingsUser.length > 0 ? (
-                            <UsersList users={followingsUser} followButton={true} />
-
+                            <div style={{ width: '100%' }}>
+                                <UsersList users={followingsUser} followButton={true} />
+                            </div>
                         ) : (
-                            <div className="container margin-top">O usuário não segue ninguém</div>
+                            <div style={{ width: '100%' }}>O usuário não segue ninguém</div>
                         )}
                     </>
                 ) : (
                     <>
                         {followersUser.length > 0 ? (
-                            <UsersList users={followersUser} followButton={true} />
+                            <div className="container margin-top">
+                                <UsersList users={followersUser} followButton={true} />
+                            </div>
                         ) : (
                             <div className="container margin-top">O usuário não possui seguidores</div>
                         )}
